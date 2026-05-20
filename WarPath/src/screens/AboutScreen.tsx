@@ -1,16 +1,17 @@
 import { useNavigation } from '@react-navigation/native';
 import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
+import { useRef } from 'react';
 import {
   ImageBackground,
   Linking,
+  PanResponder,
   ScrollView,
   StyleSheet,
   Text,
   View,
 } from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
+import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context';
 
-import Button from '../components/Button';
 import Divider from '../components/Divider';
 import Header from '../components/Header';
 import OOC from '../components/OOC';
@@ -21,15 +22,31 @@ const background = require('../../assets/Images/StoneBackground.jpg');
 
 type AboutNavProp = NativeStackNavigationProp<RootStackParamList, 'About'>;
 
+const HEADER_HEIGHT = 130;
+
 export default function AboutScreen() {
   const navigation = useNavigation<AboutNavProp>();
+  const insets = useSafeAreaInsets();
+
+  const panResponder = useRef(
+    PanResponder.create({
+      onMoveShouldSetPanResponder: (_, gs) =>
+        Math.abs(gs.dx) > 10 && Math.abs(gs.dx) > Math.abs(gs.dy),
+      onPanResponderRelease: (_, gs) => {
+        if (Math.abs(gs.dx) > 50) {
+          navigation.goBack();
+        }
+      },
+    })
+  ).current;
 
   return (
     <ImageBackground source={background} style={styles.background} resizeMode="cover">
-      <SafeAreaView style={styles.safeArea} edges={['top', 'bottom']}>
+      <SafeAreaView style={styles.safeArea} edges={['bottom']}>
         <ScrollView
-          contentContainerStyle={styles.scrollContent}
+          contentContainerStyle={[styles.scrollContent, { paddingTop: insets.top + HEADER_HEIGHT + 20 }]}
           showsVerticalScrollIndicator={false}
+          {...panResponder.panHandlers}
         >
           <Parchment style={styles.parchment}>
             <Text style={styles.pageTitle}>About</Text>
@@ -50,8 +67,6 @@ export default function AboutScreen() {
               {'\n\n'}
               As a learned scholar once proclaimed: the Age of Men is over. The Time of the Orc has come.
             </Text>
-
-
 
             <Text style={styles.sectionTitle}>Credits</Text>
             <Text style={styles.parchmentText}>INSERT CREDITS HERE</Text>
@@ -78,14 +93,14 @@ export default function AboutScreen() {
               </Text>
               .
             </OOC>
-          </Parchment>
 
-          <View style={styles.returnWrap}>
-            <Button label="Return" onPress={() => navigation.goBack()} />
-          </View>
+            <View style={styles.swipeWrap}>
+              <Divider />
+              <Text style={styles.swipeHint}>← Swipe to go back →</Text>
+            </View>
+          </Parchment>
         </ScrollView>
 
-        {/* Header overlays the scroll area so content scrolls behind it */}
         <View style={styles.headerOverlay} pointerEvents="none">
           <Header title="WARPATH" />
         </View>
@@ -108,7 +123,6 @@ const styles = StyleSheet.create({
     right: 0,
   },
   scrollContent: {
-    paddingTop: 150,
     paddingHorizontal: 24,
     paddingBottom: 32,
   },
@@ -151,9 +165,15 @@ const styles = StyleSheet.create({
     textDecorationLine: 'underline',
     fontWeight: '600',
   },
-  returnWrap: {
-    width: '85%',
-    alignSelf: 'center',
-    marginTop: 24,
+  swipeWrap: {
+    width: '100%',
+    marginTop: 16,
+    alignItems: 'center',
+    gap: 8,
+  },
+  swipeHint: {
+    color: '#8B5A3C',
+    fontSize: 14,
+    letterSpacing: 1,
   },
 });

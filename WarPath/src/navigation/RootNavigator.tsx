@@ -42,7 +42,11 @@ export default function RootNavigator() {
       <Stack.Screen name="Home" component={HomeScreen} />
       <Stack.Screen name="Login" component={LoginScreen} />
       <Stack.Screen name="Register" component={RegisterScreen} />
-      <Stack.Screen name="About" component={AboutScreen} />
+      <Stack.Screen
+        name="About"
+        component={AboutScreen}
+        options={{ animation: 'none' }}
+      />
       <Stack.Screen name="Hub" component={HubScreen} />
       <Stack.Screen name="CreateTribe" component={CreateTribeScreen} />
       <Stack.Screen name="Map" component={MapScreen} />

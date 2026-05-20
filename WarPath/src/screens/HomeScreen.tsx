@@ -1,62 +1,58 @@
 import { useNavigation } from '@react-navigation/native';
 import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
-import { ImageBackground, StyleSheet, View } from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
+import { StyleSheet, Text, View } from 'react-native';
 
 import Button from '../components/Button';
 import Divider from '../components/Divider';
-import Header from '../components/Header';
 import Parchment from '../components/Parchment';
+import ScreenLayout from '../components/ScreenLayout';
+import { useSwipeNavigation } from '../hooks/useSwipeNavigation';
 import type { RootStackParamList } from '../navigation/RootNavigator';
-
-const background = require('../../assets/Images/StoneBackground.jpg');
+import { colors, spacing, parchmentWidth } from '../theme';
 
 type HomeNavProp = NativeStackNavigationProp<RootStackParamList, 'Home'>;
 
 export default function HomeScreen() {
   const navigation = useNavigation<HomeNavProp>();
+  const swipe = useSwipeNavigation(() => navigation.navigate('About'));
 
   return (
-    <ImageBackground source={background} style={styles.background} resizeMode="cover">
-      <SafeAreaView style={styles.safeArea} edges={['top', 'bottom']}>
-        <Header title="WARPATH" />
-
-        <View style={styles.body}>
-          <Parchment style={styles.parchment}>
-            <View style={styles.buttons}>
-              <Button label="Login" onPress={() => navigation.navigate('Login')} />
-              <Divider />
-              <Button label="Register" onPress={() => navigation.navigate('Register')} />
-              <Divider />
-              <Button label="About" onPress={() => navigation.navigate('About')} />
-            </View>
-          </Parchment>
-        </View>
-      </SafeAreaView>
-    </ImageBackground>
+    <ScreenLayout title="WARPATH">
+      <View style={styles.body} {...swipe.panHandlers}>
+        <Parchment style={styles.parchment}>
+          <View style={styles.buttons}>
+            <Button label="Login" onPress={() => navigation.navigate('Login')} />
+            <Divider />
+            <Button label="Register" onPress={() => navigation.navigate('Register')} />
+            <Divider />
+            <Text style={styles.swipeHint}>← Swipe for more info →</Text>
+          </View>
+        </Parchment>
+      </View>
+    </ScreenLayout>
   );
 }
 
 const styles = StyleSheet.create({
-  background: {
-    flex: 1,
-  },
-  safeArea: {
-    flex: 1,
-  },
   body: {
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    paddingHorizontal: 24,
+    paddingHorizontal: spacing.md,
   },
   parchment: {
-    width: '85%',
+    width: parchmentWidth,
     alignSelf: 'center',
   },
   buttons: {
     width: '100%',
-    gap: 14,
+    gap: spacing.sm,
     alignItems: 'stretch',
+  },
+  swipeHint: {
+    color: colors.secondary,
+    fontSize: 14,
+    letterSpacing: 1,
+    textAlign: 'center',
   },
 });
