@@ -3,7 +3,7 @@ import { SafeAreaView, type Edge } from 'react-native-safe-area-context';
 
 import Header from './Header';
 
-const background = require('../../assets/Images/StoneBackground.jpg');
+import background from '../../assets/Images/StoneBackground.jpg';
 
 type ScreenLayoutProps = {
   title: string;

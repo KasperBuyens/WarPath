@@ -11,7 +11,8 @@ import ParchmentInput from '../components/ParchmentInput';
 import ScreenLayout from '../components/ScreenLayout';
 import { auth } from '../firebase';
 import type { RootStackParamList } from '../navigation/RootNavigator';
-import { colors, spacing, parchmentWidth } from '../theme';
+import { colors, parchmentWidth, spacing } from '../theme';
+import { usernameToEmail } from '../utils/auth';
 
 type LoginNavProp = NativeStackNavigationProp<RootStackParamList, 'Login'>;
 
@@ -25,7 +26,7 @@ export default function LoginScreen() {
 
   async function handleLogin(values: { username: string; password: string }) {
     try {
-      const email = `${values.username.trim().toLowerCase()}@warpath.app`;
+      const email = usernameToEmail(values.username);
       await signInWithEmailAndPassword(auth, email, values.password);
       navigation.replace('Hub');
     } catch {

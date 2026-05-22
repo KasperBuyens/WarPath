@@ -25,36 +25,14 @@ import Header from '../components/Header';
 import Parchment from '../components/Parchment';
 import ParchmentInput from '../components/ParchmentInput';
 import { useAuth } from '../contexts/AuthContext';
+import { LEADERS } from '../data/leaders';
 import { db } from '../firebase';
 import type { RootStackParamList } from '../navigation/RootNavigator';
-import { colors, spacing, parchmentWidth } from '../theme';
+import { colors, HEADER_HEIGHT, parchmentWidth, spacing } from '../theme';
 
-const background = require('../../assets/Images/StoneBackground.jpg');
+import background from '../../assets/Images/StoneBackground.jpg';
 
 type CreateTribeNavProp = NativeStackNavigationProp<RootStackParamList, 'CreateTribe'>;
-
-const HEADER_HEIGHT = 130;
-
-const LEADERS = [
-  {
-    id: 'melee',
-    bonus: '2× Melee Power',
-    description: 'Your sword-bearers strike twice as hard.',
-    image: require('../../assets/Images/MeleeLeader.png'),
-  },
-  {
-    id: 'range',
-    bonus: '2× Range Power',
-    description: 'Your archers loose arrows with deadly precision.',
-    image: require('../../assets/Images/RangeLeader.png'),
-  },
-  {
-    id: 'magic',
-    bonus: '1.5× All Power',
-    description: 'All warriors fight with greater ferocity.',
-    image: require('../../assets/Images/MagicLeader.png'),
-  },
-];
 
 const schema = Yup.object({
   tribeName: Yup.string().required('Tribe name is required').min(2, 'At least 2 characters'),
@@ -98,8 +76,9 @@ export default function CreateTribeScreen() {
         castleWon: false,
       });
       navigation.goBack();
-    } catch (e: any) {
-      Alert.alert('Failed to raise tribe', e.message);
+    } catch (error) {
+      const message = error instanceof Error ? error.message : 'Something went wrong.';
+      Alert.alert('Failed to raise tribe', message);
     }
   }
 
@@ -111,7 +90,7 @@ export default function CreateTribeScreen() {
           behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
         >
           <ScrollView
-            contentContainerStyle={[styles.scrollContent, { paddingTop: insets.top + HEADER_HEIGHT + 20 }]}
+            contentContainerStyle={[styles.scrollContent, { paddingTop: insets.top + HEADER_HEIGHT + spacing.sm }]}
             showsVerticalScrollIndicator={false}
             keyboardShouldPersistTaps="handled"
           >
@@ -160,15 +139,8 @@ export default function CreateTribeScreen() {
 
                     <Divider />
 
-                    <Button
-                      label="Raise"
-                      onPress={() => handleSubmit()}
-                      disabled={isSubmitting}
-                    />
-                    <Button
-                      label="Abandon"
-                      onPress={() => navigation.goBack()}
-                    />
+                    <Button label="Raise" onPress={() => handleSubmit()} disabled={isSubmitting} />
+                    <Button label="Abandon" onPress={() => navigation.goBack()} />
                   </View>
                 )}
               </Formik>
@@ -185,21 +157,10 @@ export default function CreateTribeScreen() {
 }
 
 const styles = StyleSheet.create({
-  background: {
-    flex: 1,
-  },
-  safeArea: {
-    flex: 1,
-  },
-  body: {
-    flex: 1,
-  },
-  headerOverlay: {
-    position: 'absolute',
-    top: 0,
-    left: 0,
-    right: 0,
-  },
+  background: { flex: 1 },
+  safeArea: { flex: 1 },
+  body: { flex: 1 },
+  headerOverlay: { position: 'absolute', top: 0, left: 0, right: 0 },
   scrollContent: {
     paddingHorizontal: spacing.md,
     paddingBottom: spacing.lg,

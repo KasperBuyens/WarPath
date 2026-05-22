@@ -6,13 +6,14 @@ import { Formik } from 'formik';
 import { Alert, KeyboardAvoidingView, Platform, StyleSheet, Text, View } from 'react-native';
 import * as Yup from 'yup';
 
+import Button from '../components/Button';
 import Parchment from '../components/Parchment';
 import ParchmentInput from '../components/ParchmentInput';
 import ScreenLayout from '../components/ScreenLayout';
-import Button from '../components/Button';
 import { auth, db } from '../firebase';
 import type { RootStackParamList } from '../navigation/RootNavigator';
-import { colors, spacing, parchmentWidth } from '../theme';
+import { colors, parchmentWidth, spacing } from '../theme';
+import { usernameToEmail } from '../utils/auth';
 
 type RegisterNavProp = NativeStackNavigationProp<RootStackParamList, 'Register'>;
 
@@ -29,12 +30,13 @@ export default function RegisterScreen() {
 
   async function handleRegister(values: { username: string; password: string }) {
     try {
-      const email = `${values.username.trim().toLowerCase()}@warpath.app`;
+      const email = usernameToEmail(values.username);
       const { user } = await createUserWithEmailAndPassword(auth, email, values.password);
       await setDoc(doc(db, 'users', user.uid), { name: values.username.trim() });
       navigation.replace('Hub');
-    } catch (e: any) {
-      Alert.alert('Registration failed', e.message);
+    } catch (error) {
+      const message = error instanceof Error ? error.message : 'Something went wrong.';
+      Alert.alert('Registration failed', message);
     }
   }
 
@@ -63,7 +65,7 @@ export default function RegisterScreen() {
                 )}
 
                 <ParchmentInput
-                  placeholder="Enter Password"
+                  placeholder="Enter password"
                   value={values.password}
                   onChangeText={handleChange('password')}
                   onBlur={handleBlur('password')}
@@ -74,7 +76,7 @@ export default function RegisterScreen() {
                 )}
 
                 <ParchmentInput
-                  placeholder="Confirm Password"
+                  placeholder="Confirm password"
                   value={values.confirm}
                   onChangeText={handleChange('confirm')}
                   onBlur={handleBlur('confirm')}

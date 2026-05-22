@@ -1,37 +1,10 @@
 import { Image, StyleSheet, Text, View } from 'react-native';
 
+import { LEADER_BY_ID } from '../data/leaders';
 import { colors, spacing } from '../theme';
+import type { Tribe } from '../types';
 import Divider from './Divider';
 import Parchment from './Parchment';
-
-const LEADERS: Record<string, { image: any; name: string; bonus: string }> = {
-  melee: {
-    image: require('../../assets/Images/MeleeLeader.png'),
-    name: 'Melee Warlord',
-    bonus: '2× Melee Power',
-  },
-  range: {
-    image: require('../../assets/Images/RangeLeader.png'),
-    name: 'Range Master',
-    bonus: '2× Range Power',
-  },
-  magic: {
-    image: require('../../assets/Images/MagicLeader.png'),
-    name: 'Universal Commander',
-    bonus: '1.5× All Power',
-  },
-};
-
-type TribeCardProps = {
-  id: string;
-  name: string;
-  leaderId: string;
-  meleeCount: number;
-  rangeCount: number;
-  vikingWon: boolean;
-  horseWon: boolean;
-  castleWon: boolean;
-};
 
 export default function TribeCard({
   name,
@@ -41,8 +14,8 @@ export default function TribeCard({
   vikingWon,
   horseWon,
   castleWon,
-}: TribeCardProps) {
-  const leader = LEADERS[leaderId] ?? LEADERS.melee;
+}: Tribe) {
+  const leader = LEADER_BY_ID[leaderId] ?? LEADER_BY_ID.melee;
 
   return (
     <Parchment style={styles.card} contentStyle={styles.cardContent}>
@@ -78,13 +51,11 @@ export default function TribeCard({
 }
 
 const styles = StyleSheet.create({
+  card: { width: '100%' },
   cardContent: {
     paddingVertical: 16,
     paddingHorizontal: 16,
     alignItems: 'stretch',
-  },
-  card: {
-    width: '100%',
   },
   tribeName: {
     fontSize: 32,
@@ -150,12 +121,6 @@ const styles = StyleSheet.create({
     marginBottom: 2,
     textAlign: 'center',
   },
-  won: {
-    fontSize: 15,
-    color: colors.won,
-  },
-  lost: {
-    fontSize: 15,
-    color: colors.textMuted,
-  },
+  won: { fontSize: 15, color: colors.won },
+  lost: { fontSize: 15, color: colors.textMuted },
 });

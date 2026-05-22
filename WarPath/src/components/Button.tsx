@@ -17,6 +17,7 @@ type ButtonProps = {
   style?: StyleProp<ViewStyle>;
   textStyle?: StyleProp<TextStyle>;
   disabled?: boolean;
+  compact?: boolean;
 };
 
 const LIFT = 6;
@@ -27,6 +28,7 @@ export default function Button({
   style,
   textStyle,
   disabled,
+  compact,
 }: ButtonProps) {
   return (
     <View style={[styles.wrapper, disabled && styles.wrapperDisabled, style]}>
@@ -36,10 +38,11 @@ export default function Button({
         disabled={disabled}
         style={({ pressed }) => [
           styles.button,
+          compact && styles.buttonCompact,
           pressed && styles.pressed,
         ]}
       >
-        <Text style={[styles.label, textStyle]}>{label}</Text>
+        <Text style={[styles.label, compact && styles.labelCompact, textStyle]}>{label}</Text>
       </Pressable>
     </View>
   );
@@ -73,6 +76,10 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     marginBottom: LIFT,
   },
+  buttonCompact: {
+    paddingVertical: 8,
+    paddingHorizontal: 10,
+  },
   pressed: {
     transform: [{ translateY: LIFT }],
     marginBottom: 0,
@@ -87,5 +94,9 @@ const styles = StyleSheet.create({
     textShadowColor: 'rgba(0, 0, 0, 0.6)',
     textShadowOffset: { width: 2, height: 2 },
     textShadowRadius: 3,
+  },
+  labelCompact: {
+    fontSize: 11,
+    letterSpacing: 1,
   },
 });

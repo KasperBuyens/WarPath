@@ -30,6 +30,10 @@ export const typography = {
   small: { fontSize: 13 },
 };
 
+// BAR_HEIGHT(60) + CLAW_OVERHANG(70) — matches Header and BottomNav dimensions
+export const HEADER_HEIGHT = 130;
+export const NAV_HEIGHT = 130;
+
 export const darkTextShadow = {
   textShadowColor: 'rgba(0,0,0,0.8)',
   textShadowOffset: { width: 1, height: 1 },

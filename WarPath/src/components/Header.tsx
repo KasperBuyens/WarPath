@@ -3,8 +3,8 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { colors } from '../theme';
 
-const toothBig = require('../../assets/Images/ToothBig.png');
-const toothSmall = require('../../assets/Images/ToothSmall.png');
+import toothBig from '../../assets/Images/ToothBig.png';
+import toothSmall from '../../assets/Images/ToothSmall.png';
 
 type HeaderProps = {
   title: string;
@@ -74,7 +74,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   title: {
-    color: '#FFFFFF',
+    color: colors.textLight,
     fontSize: 24,
     fontWeight: '700',
     letterSpacing: 3,

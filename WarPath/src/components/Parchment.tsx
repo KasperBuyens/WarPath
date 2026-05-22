@@ -8,7 +8,7 @@ import {
 
 import { colors } from '../theme';
 
-const parchmentBg = require('../../assets/Images/ParchmentBackground.jpg');
+import parchmentBg from '../../assets/Images/ParchmentBackground.jpg';
 
 type ParchmentProps = {
   children: React.ReactNode;

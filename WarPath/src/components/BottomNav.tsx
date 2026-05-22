@@ -7,7 +7,8 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import type { RootStackParamList } from '../navigation/RootNavigator';
 import { colors } from '../theme';
 
-const toothSmall = require('../../assets/Images/ToothSmall.png');
+import anvilLogo from '../../assets/Images/AnvilLogo.png';
+import toothSmall from '../../assets/Images/ToothSmall.png';
 
 type NavProp = NativeStackNavigationProp<RootStackParamList>;
 
@@ -27,7 +28,7 @@ export default function BottomNav({ tribeId, active }: Props) {
     <View style={styles.wrapper}>
       <View style={styles.container}>
         <View style={styles.bar}>
-          <View style={styles.toothColLeft}>
+          <View style={styles.toothColLeft} pointerEvents="none">
             <Image source={toothSmall} style={styles.tooth} resizeMode="contain" />
           </View>
 
@@ -45,11 +46,11 @@ export default function BottomNav({ tribeId, active }: Props) {
 
           <Pressable style={[styles.btnItem, active === 'train' && styles.activeBtn]} onPress={() => navigation.navigate('TrainOrcs', { tribeId })}>
             <View style={styles.iconWrap}>
-              <Image source={require('../../assets/Images/AnvilLogo.png')} style={styles.navIcon} resizeMode="contain" />
+              <Image source={anvilLogo} style={styles.navIcon} resizeMode="contain" />
             </View>
           </Pressable>
 
-          <View style={styles.toothColRight}>
+          <View style={styles.toothColRight} pointerEvents="none">
             <Image source={toothSmall} style={[styles.tooth, styles.flipH]} resizeMode="contain" />
           </View>
         </View>

@@ -3,7 +3,7 @@
     "name": "WarPath",
     "slug": "WarPath",
     "version": "1.0.0",
-    "orientation": "portrait",
+    "orientation": "default",
     "icon": "./assets/Images/LoadingScreen.png",
     "userInterfaceStyle": "light",
     "ios": {

@@ -1,6 +1,6 @@
 import { useNavigation } from '@react-navigation/native';
 import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
-import { deleteDoc, doc, onSnapshot, collection } from 'firebase/firestore';
+import { collection, deleteDoc, doc, onSnapshot } from 'firebase/firestore';
 import { useEffect, useRef, useState } from 'react';
 import { ActivityIndicator, PanResponder, Pressable, StyleSheet, Text, View } from 'react-native';
 
@@ -13,20 +13,12 @@ import TribeCard from '../components/TribeCard';
 import { useAuth } from '../contexts/AuthContext';
 import { db } from '../firebase';
 import type { RootStackParamList } from '../navigation/RootNavigator';
-import { colors, spacing, parchmentWidth, darkTextShadow } from '../theme';
+import { colors, parchmentWidth, spacing, darkTextShadow } from '../theme';
+import type { Tribe } from '../types';
 
 type HubNavProp = NativeStackNavigationProp<RootStackParamList, 'Hub'>;
 
-type Tribe = {
-  id: string;
-  name: string;
-  leaderId: string;
-  meleeCount: number;
-  rangeCount: number;
-  vikingWon: boolean;
-  horseWon: boolean;
-  castleWon: boolean;
-};
+const LIFT = 5;
 
 export default function HubScreen() {
   const navigation = useNavigation<HubNavProp>();
@@ -50,18 +42,13 @@ export default function HubScreen() {
   useEffect(() => {
     if (!user) return;
     const tribesRef = collection(db, 'users', user.uid, 'tribes');
-    const unsubscribe = onSnapshot(tribesRef, (snapshot) => {
+    return onSnapshot(tribesRef, (snapshot) => {
       const data = snapshot.docs.map((d) => ({ id: d.id, ...d.data() } as Tribe));
       tribesLengthRef.current = data.length;
       setTribes(data);
       setLoading(false);
     });
-    return unsubscribe;
   }, [user]);
-
-  useEffect(() => {
-    setIndex((i) => (tribes.length === 0 ? 0 : Math.min(i, tribes.length - 1)));
-  }, [tribes]);
 
   async function handleDelete(tribeId: string) {
     if (!user) return;
@@ -78,7 +65,7 @@ export default function HubScreen() {
     );
   }
 
-  const tribe = tribes[index];
+  const tribe = tribes[Math.min(index, tribes.length - 1)];
 
   return (
     <ScreenLayout title="SELECT TRIBE">
@@ -88,10 +75,7 @@ export default function HubScreen() {
             <Text style={styles.emptyText}>No tribes yet.</Text>
             <Text style={styles.emptySubText}>Raise thy first warband to begin.</Text>
             <Divider />
-            <Button
-              label="Raise Tribe"
-              onPress={() => navigation.navigate('CreateTribe')}
-            />
+            <Button label="Raise Tribe" onPress={() => navigation.navigate('CreateTribe')} />
           </Parchment>
         ) : (
           <View style={styles.content}>
@@ -103,7 +87,10 @@ export default function HubScreen() {
               <ActionButton onPress={() => navigation.navigate('CreateTribe')} style={styles.sideButton}>
                 <Text style={styles.actionIcon}>＋</Text>
               </ActionButton>
-              <ActionButton onPress={() => navigation.navigate('Map', { tribeId: tribe.id })} style={styles.warButton}>
+              <ActionButton
+                onPress={() => navigation.navigate('Map', { tribeId: tribe.id })}
+                style={styles.warButton}
+              >
                 <Text style={styles.warLabel}>TO WAR</Text>
               </ActionButton>
               <ActionButton onPress={() => setShowConfirm(true)} style={styles.sideButton}>
@@ -124,9 +111,15 @@ export default function HubScreen() {
   );
 }
 
-const LIFT = 5;
-
-function ActionButton({ onPress, style, children }: { onPress: () => void; style?: object; children: React.ReactNode }) {
+function ActionButton({
+  onPress,
+  style,
+  children,
+}: {
+  onPress: () => void;
+  style?: object;
+  children: React.ReactNode;
+}) {
   return (
     <View style={[btnStyles.wrapper, style]}>
       <View style={btnStyles.base} />
