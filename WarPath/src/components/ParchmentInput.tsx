@@ -6,6 +6,8 @@ import {
   type ViewStyle,
 } from 'react-native';
 
+import { colors } from '../theme';
+
 type ParchmentInputProps = TextInputProps & {
   style?: StyleProp<ViewStyle>;
 };
@@ -14,7 +16,7 @@ export default function ParchmentInput({ style, ...props }: ParchmentInputProps)
   return (
     <TextInput
       style={[styles.input, style]}
-      placeholderTextColor="#8B6B52"
+      placeholderTextColor={colors.textMuted}
       autoCapitalize="none"
       {...props}
     />
@@ -24,14 +26,14 @@ export default function ParchmentInput({ style, ...props }: ParchmentInputProps)
 const styles = StyleSheet.create({
   input: {
     width: '100%',
-    backgroundColor: '#F5E6D3',
+    backgroundColor: colors.parchment,
     borderWidth: 2,
-    borderColor: '#8B5A3C',
+    borderColor: colors.secondary,
     borderRadius: 4,
     paddingVertical: 12,
     paddingHorizontal: 16,
     fontSize: 16,
-    color: '#31221e',
+    color: colors.text,
     textAlign: 'center',
   },
 });

@@ -9,6 +9,8 @@ import {
   type ViewStyle,
 } from 'react-native';
 
+import { colors } from '../theme';
+
 type ButtonProps = {
   label: string;
   onPress?: PressableProps['onPress'];
@@ -57,16 +59,16 @@ const styles = StyleSheet.create({
     left: 0,
     right: 0,
     bottom: 0,
-    backgroundColor: '#2B0507',
+    backgroundColor: colors.primaryDark,
     borderRadius: 6,
   },
   button: {
-    backgroundColor: '#5A0E12',
+    backgroundColor: colors.primary,
     paddingVertical: 16,
     paddingHorizontal: 24,
     borderRadius: 6,
     borderWidth: 3,
-    borderColor: '#2B0507',
+    borderColor: colors.primaryDark,
     alignItems: 'center',
     justifyContent: 'center',
     marginBottom: LIFT,
@@ -76,11 +78,12 @@ const styles = StyleSheet.create({
     marginBottom: 0,
   },
   label: {
-    color: '#F4E4D7',
+    color: colors.textLight,
     fontSize: 22,
     fontWeight: '700',
     letterSpacing: 3,
     textTransform: 'uppercase',
+    textAlign: 'center',
     textShadowColor: 'rgba(0, 0, 0, 0.6)',
     textShadowOffset: { width: 2, height: 2 },
     textShadowRadius: 3,

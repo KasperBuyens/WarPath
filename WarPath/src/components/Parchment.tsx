@@ -6,14 +6,17 @@ import {
   type ViewStyle,
 } from 'react-native';
 
+import { colors } from '../theme';
+
 const parchmentBg = require('../../assets/Images/ParchmentBackground.jpg');
 
 type ParchmentProps = {
   children: React.ReactNode;
   style?: StyleProp<ViewStyle>;
+  contentStyle?: StyleProp<ViewStyle>;
 };
 
-export default function Parchment({ children, style }: ParchmentProps) {
+export default function Parchment({ children, style, contentStyle }: ParchmentProps) {
   return (
     <View style={[styles.wrap, style]}>
       <View style={styles.seal} />
@@ -23,7 +26,7 @@ export default function Parchment({ children, style }: ParchmentProps) {
         imageStyle={styles.bgImage}
         resizeMode="repeat"
       >
-        <View style={styles.content}>{children}</View>
+        <View style={[styles.content, contentStyle]}>{children}</View>
       </ImageBackground>
     </View>
   );
@@ -38,9 +41,9 @@ const styles = StyleSheet.create({
     width: 120,
     height: 26,
     borderRadius: 13,
-    backgroundColor: '#8B5A3C',
+    backgroundColor: colors.secondary,
     borderWidth: 2,
-    borderColor: '#5D2E0D',
+    borderColor: colors.secondaryDark,
     marginBottom: -13,
     zIndex: 10,
     elevation: 5,
@@ -51,10 +54,10 @@ const styles = StyleSheet.create({
   },
   border: {
     borderWidth: 3,
-    borderColor: '#8B5A3C',
+    borderColor: colors.secondary,
     borderRadius: 6,
     overflow: 'hidden',
-    backgroundColor: '#F5E6D3',
+    backgroundColor: colors.parchment,
   },
   bgImage: {
     borderRadius: 6,

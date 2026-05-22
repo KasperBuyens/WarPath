@@ -1,10 +1,12 @@
 import { StyleSheet, Text, View } from 'react-native';
 
+import { colors } from '../theme';
+
 type DividerProps = {
   symbol?: string;
 };
 
-export default function Divider({ symbol = '⚜' }: DividerProps) {
+export default function Divider({ symbol = '☠' }: DividerProps) {
   return (
     <View style={styles.row}>
       <View style={styles.line} />
@@ -25,11 +27,11 @@ const styles = StyleSheet.create({
   line: {
     flex: 1,
     height: 2,
-    backgroundColor: '#8B5A3C',
+    backgroundColor: colors.secondary,
     opacity: 0.6,
   },
   symbol: {
     fontSize: 20,
-    color: '#5A0E12',
+    color: colors.secondary,
   },
 });

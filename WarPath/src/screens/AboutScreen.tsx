@@ -17,6 +17,7 @@ import Header from '../components/Header';
 import OOC from '../components/OOC';
 import Parchment from '../components/Parchment';
 import type { RootStackParamList } from '../navigation/RootNavigator';
+import { colors, typography } from '../theme';
 
 const background = require('../../assets/Images/StoneBackground.jpg');
 
@@ -51,7 +52,7 @@ export default function AboutScreen() {
           <Parchment style={styles.parchment}>
             <Text style={styles.pageTitle}>About</Text>
 
-            <Divider symbol="⚔" />
+            <Divider />
 
             <OOC>
               &quot;Warpath&quot; is a school project for the subject &quot;Mobile&quot;.
@@ -131,37 +132,35 @@ const styles = StyleSheet.create({
     alignSelf: 'center',
   },
   pageTitle: {
-    fontSize: 32,
-    fontWeight: '700',
-    color: '#5A0E12',
+    ...typography.heading,
+    color: colors.primary,
     letterSpacing: 2,
     textAlign: 'center',
     marginBottom: 8,
   },
   parchmentText: {
+    ...typography.body,
     width: '100%',
-    fontSize: 17,
-    lineHeight: 25,
-    color: '#31221e',
+    color: colors.text,
     textAlign: 'left',
   },
   sectionTitle: {
     width: '100%',
     fontSize: 22,
     fontWeight: '700',
-    color: '#5A0E12',
+    color: colors.primary,
     letterSpacing: 1,
     marginTop: 18,
     marginBottom: 8,
   },
   allOther: {
+    ...typography.caption,
     width: '100%',
-    fontSize: 14,
-    color: '#31221e',
+    color: colors.text,
     marginTop: 6,
   },
   link: {
-    color: '#5A0E12',
+    color: colors.primary,
     textDecorationLine: 'underline',
     fontWeight: '600',
   },
@@ -172,7 +171,7 @@ const styles = StyleSheet.create({
     gap: 8,
   },
   swipeHint: {
-    color: '#8B5A3C',
+    color: colors.secondary,
     fontSize: 14,
     letterSpacing: 1,
   },

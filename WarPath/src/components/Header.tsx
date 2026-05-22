@@ -1,6 +1,8 @@
 import { Image, StyleSheet, Text, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
+import { colors } from '../theme';
+
 const toothBig = require('../../assets/Images/ToothBig.png');
 const toothSmall = require('../../assets/Images/ToothSmall.png');
 
@@ -45,7 +47,7 @@ const CLAW_OVERHANG = 70;
 const styles = StyleSheet.create({
   statusBarFill: {
     width: '100%',
-    backgroundColor: '#310406',
+    backgroundColor: colors.statusBar,
   },
   container: {
     width: '100%',
@@ -56,9 +58,9 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'flex-start',
     height: BAR_HEIGHT,
-    backgroundColor: '#5A0E12',
+    backgroundColor: colors.primary,
     borderBottomWidth: 2,
-    borderBottomColor: '#2B0507',
+    borderBottomColor: colors.primaryDark,
   },
   colSm: {
     width: '12%',
