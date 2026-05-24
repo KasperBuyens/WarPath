@@ -3,7 +3,7 @@ import type { RouteProp } from '@react-navigation/native';
 import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import * as ScreenOrientation from 'expo-screen-orientation';
 import { doc, onSnapshot } from 'firebase/firestore';
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import { Alert, Image, ImageBackground, ScrollView, StyleSheet, Text, View } from 'react-native';
 import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context';
 
@@ -31,10 +31,16 @@ export default function BattleScreen() {
   const [tribe, setTribe] = useState<TribeCounts | null>(null);
 
   const battle = BATTLES[params.locationId];
+  const goingToBattleWon = useRef(false);
 
   useFocusEffect(useCallback(() => {
+    goingToBattleWon.current = false;
     ScreenOrientation.lockAsync(ScreenOrientation.OrientationLock.LANDSCAPE);
-    return () => { ScreenOrientation.lockAsync(ScreenOrientation.OrientationLock.PORTRAIT); };
+    return () => {
+      if (!goingToBattleWon.current) {
+        ScreenOrientation.lockAsync(ScreenOrientation.OrientationLock.PORTRAIT);
+      }
+    };
   }, []));
 
   useEffect(() => {
@@ -64,6 +70,7 @@ export default function BattleScreen() {
       );
       return;
     }
+    goingToBattleWon.current = true;
     navigation.replace('BattleWon', { tribeId: params.tribeId, locationId: params.locationId });
   }
 
@@ -134,7 +141,7 @@ const styles = StyleSheet.create({
   },
   title: {
     ...typography.body,
-    fontWeight: '700',
+    fontFamily: 'CaesarDressing',
     color: colors.text,
     width: '100%',
     textAlign: 'center',

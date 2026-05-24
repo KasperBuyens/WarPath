@@ -76,7 +76,7 @@ const styles = StyleSheet.create({
   title: {
     color: colors.textLight,
     fontSize: 24,
-    fontWeight: '700',
+    fontFamily: 'CaesarDressing',
     letterSpacing: 3,
     textAlign: 'center',
   },

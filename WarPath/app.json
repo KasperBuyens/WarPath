@@ -12,6 +12,9 @@
     "android": {
       "package": "com.kasperbuyens.warpath",
       "predictiveBackGestureEnabled": false
-    }
+    },
+    "plugins": [
+      "expo-font"
+    ]
   }
 }

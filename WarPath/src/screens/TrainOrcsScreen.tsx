@@ -6,9 +6,7 @@ import {
   Animated,
   Image,
   ImageBackground,
-  PanResponder,
   Pressable,
-  ScrollView,
   StyleSheet,
   Text,
   useWindowDimensions,
@@ -21,6 +19,7 @@ import Button from '../components/Button';
 import Divider from '../components/Divider';
 import Header from '../components/Header';
 import Parchment from '../components/Parchment';
+import { useSlideSwipe } from '../hooks/useSlideSwipe';
 import { useAuth } from '../contexts/AuthContext';
 import { db } from '../firebase';
 import type { RootStackParamList } from '../navigation/RootNavigator';
@@ -46,8 +45,9 @@ export default function TrainOrcsScreen() {
   const [sessionArcher, setSessionArcher] = useState(0);
   const [cheatMode, setCheatMode] = useState(false);
 
-  const panelIndexRef = useRef(0);
-  const slideAnim = useRef(new Animated.Value(0)).current;
+  const panelCountRef = useRef(2);
+  const { slideAnim, panHandlers } = useSlideSwipe({ screenWidth, countRef: panelCountRef });
+
   const anvilScale = useRef(new Animated.Value(1)).current;
   const targetPos = useRef(new Animated.ValueXY({ x: 0, y: 0 })).current;
   const zoneWidth = useRef(0);
@@ -58,28 +58,6 @@ export default function TrainOrcsScreen() {
   const userRef = useRef(user);
   userRef.current = user;
   const tribeIdRef = useRef(params.tribeId);
-
-  const switchPanelFn = useRef<(i: number) => void>(() => {});
-  switchPanelFn.current = (index: number) => {
-    panelIndexRef.current = index;
-    Animated.spring(slideAnim, {
-      toValue: -index * screenWidth,
-      useNativeDriver: true,
-      tension: 80,
-      friction: 10,
-    }).start();
-  };
-
-  const panResponder = useRef(
-    PanResponder.create({
-      onMoveShouldSetPanResponder: (_, gs) =>
-        Math.abs(gs.dx) > 10 && Math.abs(gs.dx) > Math.abs(gs.dy),
-      onPanResponderRelease: (_, gs) => {
-        if (Math.abs(gs.dx) > 50)
-          switchPanelFn.current(panelIndexRef.current === 0 ? 1 : 0);
-      },
-    })
-  ).current;
 
   useEffect(() => {
     if (!user) return;
@@ -144,7 +122,7 @@ export default function TrainOrcsScreen() {
     <ImageBackground source={background} style={styles.bg} resizeMode="cover">
       <SafeAreaView style={styles.safe} edges={[]}>
 
-        <View style={styles.viewport}>
+        <View style={styles.viewport} {...panHandlers}>
           <Animated.View
             style={[
               styles.slidingRow,
@@ -153,23 +131,17 @@ export default function TrainOrcsScreen() {
           >
 
             {/* ─── Panel 0 · Melee ─────────────────────────── */}
-            <ScrollView
-              style={{ width: screenWidth }}
-              contentContainerStyle={[styles.meleePanel, {
-                paddingTop: insets.top + 85,
-                paddingBottom: insets.bottom + NAV_HEIGHT + spacing.md,
-              }]}
-              showsVerticalScrollIndicator={false}
-              bounces={false}
-              {...panResponder.panHandlers}
+            <View
+              style={[styles.panel, { width: screenWidth, paddingTop: insets.top + 85, paddingBottom: insets.bottom + NAV_HEIGHT + spacing.md }]}
             >
-              <Text style={[styles.countText, { color: colors.won, textAlign: 'center' }]}>
-                Warriors trained: {meleeCount + sessionMelee}
-              </Text>
-
               <Parchment style={styles.parchment} contentStyle={styles.parchmentContent}>
+
                 <Text style={[styles.bodyText, { textAlign: 'center' }]}>
-                  The sound of hammers hitting iron rings across the camp. An Orc warrior needs a strong weapon to bash the skulls of their enemies!
+                  Hammer the anvil to arm your warriors!
+                </Text>
+
+                <Text style={[styles.countText, { color: colors.won, textAlign: 'center' }]}>
+                  Warriors armed: {meleeCount + sessionMelee}
                 </Text>
 
                 <Divider />
@@ -188,34 +160,19 @@ export default function TrainOrcsScreen() {
                   {'<'} swipe for ranged training {'>'}
                 </Text>
               </Parchment>
-
-              <Button
-                label={cheatMode ? 'Cheat x10: ON' : 'Cheat x10: OFF'}
-                onPress={() => setCheatMode((v) => !v)}
-                style={styles.cheatBtn}
-                textStyle={styles.cheatBtnLabel}
-                compact
-              />
-            </ScrollView>
+            </View>
 
             {/* ─── Panel 1 · Ranged ────────────────────────── */}
-            <ScrollView
-              style={{ width: screenWidth }}
-              contentContainerStyle={[styles.meleePanel, {
-                paddingTop: insets.top + 85,
-                paddingBottom: insets.bottom + NAV_HEIGHT + spacing.md,
-              }]}
-              showsVerticalScrollIndicator={false}
-              bounces={false}
-              {...panResponder.panHandlers}
+            <View
+              style={[styles.panel, { width: screenWidth, paddingTop: insets.top + 85, paddingBottom: insets.bottom + NAV_HEIGHT + spacing.md }]}
             >
-              <Text style={[styles.countText, { color: colors.won, textAlign: 'center' }]}>
-                Archers trained: {rangeCount + sessionArcher}
-              </Text>
-
               <Parchment style={styles.parchment} contentStyle={styles.parchmentContent}>
                 <Text style={[styles.bodyText, { textAlign: 'center' }]}>
-                  Eyes sharp, breath steady, fingers swift. Strike the moving target true — thy archers shall rain death from afar.
+                  Hit the target to train archers!
+                </Text>
+
+                <Text style={[styles.countText, { color: colors.won, textAlign: 'center' }]}>
+                  Archers trained: {rangeCount + sessionArcher}
                 </Text>
 
                 <Divider />
@@ -242,15 +199,7 @@ export default function TrainOrcsScreen() {
                   {'<'} swipe for melee training {'>'}
                 </Text>
               </Parchment>
-
-              <Button
-                label={cheatMode ? 'Cheat x10: ON' : 'Cheat x10: OFF'}
-                onPress={() => setCheatMode((v) => !v)}
-                style={styles.cheatBtn}
-                textStyle={styles.cheatBtnLabel}
-                compact
-              />
-            </ScrollView>
+            </View>
 
           </Animated.View>
         </View>
@@ -260,8 +209,20 @@ export default function TrainOrcsScreen() {
         </View>
 
         <View style={styles.headerOverlay} pointerEvents="none">
-          <Header title="Train Orc" />
+          <Header title="TRAIN ORCS" />
         </View>
+
+        <View style={[styles.cheatBtnOverlay, { bottom: insets.bottom + 60 }]}>
+          <Button
+            label={cheatMode ? 'Cheat x10: ON' : 'Cheat x10: OFF'}
+            onPress={() => setCheatMode((v) => !v)}
+            style={styles.cheatBtn}
+            textStyle={styles.cheatBtnLabel}
+            compact
+            noLift
+          />
+        </View>
+
       </SafeAreaView>
     </ImageBackground>
   );
@@ -272,42 +233,50 @@ const styles = StyleSheet.create({
   safe: { flex: 1 },
   viewport: { flex: 1, overflow: 'hidden' },
   slidingRow: { flex: 1, flexDirection: 'row' },
-  parchment: { width: '100%' },
-  parchmentContent: { paddingVertical: spacing.md, paddingHorizontal: spacing.md, gap: spacing.xs },
-  meleePanel: {
+  parchment: { width: '100%', marginTop: 40 },
+  parchmentContent: { paddingTop: 16, paddingBottom: 16, paddingHorizontal: spacing.xs, gap: 2 },
+  panel: {
+    flex: 1,
     paddingHorizontal: spacing.md,
     alignItems: 'center',
     gap: spacing.sm,
+    justifyContent: 'center',
+    paddingTop: 40,
   },
   anvilArea: {
+    width: '100%',
+    height: 185,
     alignItems: 'center',
+    justifyContent: 'center',
   },
   bodyText: {
     ...typography.body,
+    fontSize: 15,
     width: '100%',
     color: colors.text,
   },
-  anvilImg: { width: 220, height: 220 },
+  anvilImg: { width: 185, height: 185 },
   targetZone: {
     width: '100%',
-    height: 160,
+    height: 185,
     overflow: 'hidden',
   },
   targetMover: { position: 'absolute' },
   targetImg: { width: TARGET_SIZE, height: TARGET_SIZE },
   countText: {
-    fontSize: 20,
+    fontSize: 16,
     fontWeight: '700',
     letterSpacing: 1,
-    marginTop: 8,
   },
   swipeHint: {
     color: colors.secondary,
-    fontSize: 14,
+    fontSize: 12,
     letterSpacing: 1,
+    marginBottom: 12,
   },
   headerOverlay: { position: 'absolute', top: 0, left: 0, right: 0 },
   footerOverlay: { position: 'absolute', bottom: 0, left: 0, right: 0 },
-  cheatBtn: { width: '50%', alignSelf: 'center', opacity: 0.45 },
+  cheatBtnOverlay: { position: 'absolute', left: 0, right: 0, alignItems: 'center' },
+  cheatBtn: { width: '50%', opacity: 0.45 },
   cheatBtnLabel: { fontSize: 11, letterSpacing: 1 },
 });

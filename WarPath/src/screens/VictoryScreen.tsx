@@ -1,14 +1,14 @@
 import { useFocusEffect, useNavigation } from '@react-navigation/native';
 import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import * as ScreenOrientation from 'expo-screen-orientation';
-import { useCallback } from 'react';
-import { Image, ImageBackground, StyleSheet, Text, View } from 'react-native';
+import { useCallback, useEffect, useRef } from 'react';
+import { Animated, Image, ImageBackground, ScrollView, StyleSheet, Text, View } from 'react-native';
 import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import background from '../../assets/Images/StoneBackground.jpg';
-import toothBig from '../../assets/Images/ToothBig.png';
-import toothSmall from '../../assets/Images/ToothSmall.png';
+import victoryImage from '../../assets/Images/WarVictory.png';
 import Button from '../components/Button';
+import Divider from '../components/Divider';
 import Parchment from '../components/Parchment';
 import type { RootStackParamList } from '../navigation/RootNavigator';
 import { colors, spacing, typography } from '../theme';
@@ -19,112 +19,128 @@ export default function VictoryScreen() {
   const navigation = useNavigation<VictoryNavProp>();
   const insets = useSafeAreaInsets();
 
+  const pulseAnim = useRef(new Animated.Value(0)).current;
+
   useFocusEffect(useCallback(() => {
     ScreenOrientation.lockAsync(ScreenOrientation.OrientationLock.LANDSCAPE);
     return () => { ScreenOrientation.lockAsync(ScreenOrientation.OrientationLock.PORTRAIT); };
   }, []));
 
+  useEffect(() => {
+    Animated.sequence([
+      Animated.timing(pulseAnim, { toValue: 1, duration: 350, useNativeDriver: true }),
+      Animated.timing(pulseAnim, { toValue: 0.85, duration: 200, useNativeDriver: true }),
+      Animated.timing(pulseAnim, { toValue: 1, duration: 200, useNativeDriver: true }),
+      Animated.delay(700),
+      Animated.timing(pulseAnim, { toValue: 0, duration: 400, useNativeDriver: true }),
+    ]).start();
+  }, []);
+
+  const pulseOpacity = pulseAnim;
+  const pulseScale = pulseAnim.interpolate({ inputRange: [0, 1], outputRange: [0.4, 1] });
+
   return (
     <ImageBackground source={background} style={styles.background} resizeMode="cover">
       <SafeAreaView style={styles.safeArea} edges={['left', 'right']}>
-        <View style={[styles.frame, { marginVertical: insets.top + spacing.sm }]}>
+        <View style={[styles.content, { paddingVertical: insets.top + spacing.md }]}>
 
-          <View style={styles.header}>
-            <Text style={styles.headerText}>War Won!</Text>
+          <View style={styles.imagePanel}>
+            <Image source={victoryImage} style={styles.victoryImage} resizeMode="contain" />
           </View>
 
-          <View style={styles.content}>
-            <Image source={toothBig} style={[styles.tooth, styles.topLeft]} resizeMode="contain" />
-            <Image source={toothBig} style={[styles.tooth, styles.topRight]} resizeMode="contain" />
-            <Image source={toothSmall} style={[styles.tooth, styles.bottomLeft]} resizeMode="contain" />
-            <Image source={toothSmall} style={[styles.tooth, styles.bottomRight]} resizeMode="contain" />
-
-            <Parchment style={styles.parchment} contentStyle={styles.parchmentContent}>
-              <Text style={styles.title}>The War is won!</Text>
+          <ScrollView style={styles.infoPanel} showsVerticalScrollIndicator={false} bounces={false}>
+            <Parchment style={styles.parchmentWrap} contentStyle={styles.parchmentContent}>
+              <Text style={styles.title}>The War is Won!</Text>
               <Text style={styles.lore}>
-                The orcs have conquered the entirety of the Realm of Legarion
+                The war is won! The orcs have captured all leaders of the Human Lands.                
+                {'\n\n'}
+                Orc Warrios are marching through the villages near the capitol. They burn buildings and slaughter civilions, with noone to stop them.
+                {'\n\n'}
+                The defeated kings and barons are brought to the town square and to be executed for all to see.
+                {'\n\n'}
+                Knelt down, their heads will be severed from their shoulders one by one, their blood staining the grass.
+                {'\n\n'}
+                As a learned schollar once proclaimed: The Age of Men is over. The Time of the Orc has come
               </Text>
-            </Parchment>
-          </View>
 
-          <View style={styles.footer}>
-            <Button
-              label="Return to Hub"
-              onPress={() => navigation.navigate('Hub')}
-              style={styles.btn}
-              textStyle={styles.btnLabel}
-            />
-          </View>
+              <Divider />
+
+              <Button
+                label="Return to Hub"
+                onPress={() => navigation.navigate('Hub')}
+                textStyle={styles.btnLabel}
+              />
+            </Parchment>
+          </ScrollView>
 
         </View>
       </SafeAreaView>
+
+      <Animated.View
+        style={[styles.victoryOverlay, { opacity: pulseOpacity, transform: [{ scale: pulseScale }] }]}
+        pointerEvents="none"
+      >
+        <Text style={styles.victoryText}>VICTORY</Text>
+      </Animated.View>
     </ImageBackground>
   );
 }
 
-const TOOTH_SIZE = 90;
-
 const styles = StyleSheet.create({
   background: { flex: 1 },
-  safeArea: { flex: 1, justifyContent: 'center' },
-  frame: {
-    marginHorizontal: spacing.md,
-    borderWidth: 3,
-    borderColor: colors.primaryDark,
-    overflow: 'hidden',
-  },
-  header: {
-    backgroundColor: colors.primary,
-    paddingVertical: spacing.sm,
-    alignItems: 'center',
-    borderBottomWidth: 3,
-    borderBottomColor: colors.primaryDark,
-  },
-  headerText: {
-    ...typography.title,
-    color: colors.textLight,
-    textShadowColor: 'rgba(0,0,0,0.6)',
-    textShadowOffset: { width: 2, height: 2 },
-    textShadowRadius: 4,
-  },
+  safeArea: { flex: 1 },
   content: {
     flex: 1,
+    flexDirection: 'row',
+    paddingHorizontal: spacing.md,
+    gap: spacing.md,
+  },
+  imagePanel: {
+    width: '55%',
     justifyContent: 'center',
     alignItems: 'center',
-    padding: spacing.md,
   },
-  tooth: {
-    position: 'absolute',
-    width: TOOTH_SIZE,
-    height: TOOTH_SIZE,
+  victoryImage: {
+    width: '100%',
+    height: '100%',
   },
-  topLeft: { top: 0, left: 0 },
-  topRight: { top: 0, right: 0, transform: [{ scaleX: -1 }] },
-  bottomLeft: { bottom: 0, left: 0, transform: [{ scaleY: -1 }] },
-  bottomRight: { bottom: 0, right: 0, transform: [{ scaleX: -1 }, { scaleY: -1 }] },
-  parchment: { width: '70%' },
+  infoPanel: {
+    width: '45%',
+  },
+  parchmentWrap: {
+    width: '100%',
+  },
   parchmentContent: {
     paddingVertical: spacing.sm,
     paddingHorizontal: spacing.md,
     gap: spacing.xs,
-    alignItems: 'center',
+    alignItems: 'flex-start',
   },
-  footer: {
-    paddingHorizontal: spacing.md,
-    paddingBottom: spacing.sm,
-  },
-  btn: { width: '100%' },
-  btnLabel: { fontSize: 13, letterSpacing: 1 },
   title: {
     ...typography.body,
-    fontWeight: '700',
+    fontFamily: 'CaesarDressing',
     color: colors.text,
-    textAlign: 'center',
+    width: '100%',
   },
   lore: {
     ...typography.small,
     color: colors.text,
-    textAlign: 'center',
     lineHeight: 18,
+  },
+  btnLabel: { fontSize: 13, letterSpacing: 1 },
+  victoryOverlay: {
+    position: 'absolute',
+    top: 0, left: 0, right: 0, bottom: 0,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  victoryText: {
+    fontSize: 72,
+    fontFamily: 'CaesarDressing',
+    color: '#FFD700',
+    letterSpacing: 12,
+    textShadowColor: 'rgba(0,0,0,0.85)',
+    textShadowOffset: { width: 3, height: 3 },
+    textShadowRadius: 8,
   },
 });

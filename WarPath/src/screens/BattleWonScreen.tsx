@@ -3,7 +3,7 @@ import type { RouteProp } from '@react-navigation/native';
 import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import * as ScreenOrientation from 'expo-screen-orientation';
 import { doc, getDoc, setDoc } from 'firebase/firestore';
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import { Image, ImageBackground, ScrollView, StyleSheet, Text, View } from 'react-native';
 import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context';
 
@@ -28,10 +28,16 @@ export default function BattleWonScreen() {
 
   const battle = BATTLES[params.locationId];
   const [losses, setLosses] = useState<{ melee: number; range: number } | null>(null);
+  const goingToVictory = useRef(false);
 
   useFocusEffect(useCallback(() => {
+    goingToVictory.current = false;
     ScreenOrientation.lockAsync(ScreenOrientation.OrientationLock.LANDSCAPE);
-    return () => { ScreenOrientation.lockAsync(ScreenOrientation.OrientationLock.PORTRAIT); };
+    return () => {
+      if (!goingToVictory.current) {
+        ScreenOrientation.lockAsync(ScreenOrientation.OrientationLock.PORTRAIT);
+      }
+    };
   }, []));
 
   useEffect(() => {
@@ -83,7 +89,7 @@ export default function BattleWonScreen() {
               {params.locationId === 'castle' ? (
                 <Button
                   label="See the Victory!"
-                  onPress={() => navigation.navigate('Victory')}
+                  onPress={() => { goingToVictory.current = true; navigation.navigate('Victory'); }}
                   textStyle={styles.btnLabel}
                 />
               ) : (
@@ -138,7 +144,7 @@ const styles = StyleSheet.create({
   },
   title: {
     ...typography.body,
-    fontWeight: '700',
+    fontFamily: 'CaesarDressing',
     color: colors.text,
     width: '100%',
   },

@@ -48,7 +48,7 @@ const styles = StyleSheet.create({
   },
   title: {
     fontSize: 26,
-    fontWeight: '700',
+    fontFamily: 'CaesarDressing',
     color: colors.primary,
     textAlign: 'center',
     letterSpacing: 2,

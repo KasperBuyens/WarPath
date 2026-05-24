@@ -59,7 +59,7 @@ const styles = StyleSheet.create({
   },
   tribeName: {
     fontSize: 32,
-    fontWeight: '700',
+    fontFamily: 'CaesarDressing',
     color: colors.primary,
     letterSpacing: 2,
     textAlign: 'center',

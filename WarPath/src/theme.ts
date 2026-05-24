@@ -23,8 +23,8 @@ export const spacing = {
 export const parchmentWidth = '85%';
 
 export const typography = {
-  heading: { fontSize: 32, fontWeight: '700' as const },
-  title: { fontSize: 24, fontWeight: '700' as const, letterSpacing: 2 },
+  heading: { fontSize: 32, fontFamily: 'CaesarDressing' },
+  title: { fontSize: 24, fontFamily: 'CaesarDressing', letterSpacing: 2 },
   body: { fontSize: 17, lineHeight: 25 },
   caption: { fontSize: 14 },
   small: { fontSize: 13 },

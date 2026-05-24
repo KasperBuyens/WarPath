@@ -18,6 +18,7 @@ type ButtonProps = {
   textStyle?: StyleProp<TextStyle>;
   disabled?: boolean;
   compact?: boolean;
+  noLift?: boolean;
 };
 
 const LIFT = 6;
@@ -29,6 +30,7 @@ export default function Button({
   textStyle,
   disabled,
   compact,
+  noLift,
 }: ButtonProps) {
   return (
     <View style={[styles.wrapper, disabled && styles.wrapperDisabled, style]}>
@@ -39,7 +41,8 @@ export default function Button({
         style={({ pressed }) => [
           styles.button,
           compact && styles.buttonCompact,
-          pressed && styles.pressed,
+          pressed && !noLift && styles.pressed,
+          pressed && noLift && styles.pressedScale,
         ]}
       >
         <Text style={[styles.label, compact && styles.labelCompact, textStyle]}>{label}</Text>
@@ -84,10 +87,13 @@ const styles = StyleSheet.create({
     transform: [{ translateY: LIFT }],
     marginBottom: 0,
   },
+  pressedScale: {
+    transform: [{ scale: 0.93 }],
+  },
   label: {
     color: colors.textLight,
     fontSize: 22,
-    fontWeight: '700',
+    fontFamily: 'CaesarDressing',
     letterSpacing: 3,
     textTransform: 'uppercase',
     textAlign: 'center',

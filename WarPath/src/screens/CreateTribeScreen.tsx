@@ -35,7 +35,7 @@ import background from '../../assets/Images/StoneBackground.jpg';
 type CreateTribeNavProp = NativeStackNavigationProp<RootStackParamList, 'CreateTribe'>;
 
 const schema = Yup.object({
-  tribeName: Yup.string().required('Tribe name is required').min(2, 'At least 2 characters'),
+  tribeName: Yup.string().required('Tribe name is required').min(2, 'At least 2 characters').max(25, 'Max 25 characters'),
 });
 
 export default function CreateTribeScreen() {
@@ -107,6 +107,7 @@ export default function CreateTribeScreen() {
                       value={values.tribeName}
                       onChangeText={handleChange('tribeName')}
                       onBlur={handleBlur('tribeName')}
+                      maxLength={25}
                     />
                     {touched.tribeName && errors.tribeName && (
                       <Text style={styles.error}>{errors.tribeName}</Text>
