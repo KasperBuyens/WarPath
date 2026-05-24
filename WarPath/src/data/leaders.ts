@@ -8,6 +8,10 @@ export type Leader = {
   bonus: string;
   description: string;
   image: number;
+  meleeMultiplier: number;
+  rangeMultiplier: number;
+  meleeLossMultiplier: number;
+  rangeLossMultiplier: number;
 };
 
 export const LEADERS: Leader[] = [
@@ -17,6 +21,10 @@ export const LEADERS: Leader[] = [
     bonus: '2× Melee Power',
     description: 'Your sword-bearers strike twice as hard.',
     image: meleeLeader,
+    meleeMultiplier: 2,
+    rangeMultiplier: 1,
+    meleeLossMultiplier: 0.5,
+    rangeLossMultiplier: 1,
   },
   {
     id: 'range',
@@ -24,6 +32,10 @@ export const LEADERS: Leader[] = [
     bonus: '2× Range Power',
     description: 'Your archers loose arrows with deadly precision.',
     image: rangeLeader,
+    meleeMultiplier: 1,
+    rangeMultiplier: 2,
+    meleeLossMultiplier: 1,
+    rangeLossMultiplier: 0.5,
   },
   {
     id: 'magic',
@@ -31,6 +43,10 @@ export const LEADERS: Leader[] = [
     bonus: '1.5× All Power',
     description: 'All warriors fight with greater ferocity.',
     image: magicLeader,
+    meleeMultiplier: 1.5,
+    rangeMultiplier: 1.5,
+    meleeLossMultiplier: 0.75,
+    rangeLossMultiplier: 0.75,
   },
 ];
 
@@ -39,25 +55,17 @@ export const LEADER_BY_ID: Record<string, Leader> = Object.fromEntries(
 );
 
 export function getMeleeMultiplier(leaderId: string): number {
-  if (leaderId === 'melee') return 2;
-  if (leaderId === 'magic') return 1.5;
-  return 1;
+  return LEADER_BY_ID[leaderId]?.meleeMultiplier ?? 1;
 }
 
 export function getRangeMultiplier(leaderId: string): number {
-  if (leaderId === 'range') return 2;
-  if (leaderId === 'magic') return 1.5;
-  return 1;
+  return LEADER_BY_ID[leaderId]?.rangeMultiplier ?? 1;
 }
 
 export function getMeleeLossMultiplier(leaderId: string): number {
-  if (leaderId === 'melee') return 0.5;
-  if (leaderId === 'magic') return 0.75;
-  return 1;
+  return LEADER_BY_ID[leaderId]?.meleeLossMultiplier ?? 1;
 }
 
 export function getRangeLossMultiplier(leaderId: string): number {
-  if (leaderId === 'range') return 0.5;
-  if (leaderId === 'magic') return 0.75;
-  return 1;
+  return LEADER_BY_ID[leaderId]?.rangeLossMultiplier ?? 1;
 }

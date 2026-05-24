@@ -22,13 +22,13 @@ import { useAuth } from '../contexts/AuthContext';
 import { db } from '../firebase';
 import { useAppDispatch, useAppSelector } from '../store';
 import { toggleCheatMode } from '../store/settingsSlice';
-import { BAR_HEIGHT, CLAW_OVERHANG, colors, HEADER_HEIGHT, spacing, typography } from '../theme';
+import { colors, HEADER_HEIGHT, spacing, typography } from '../theme';
 
 import anvilImage from '../../assets/Images/Anvil.png';
 import background from '../../assets/Images/StoneBackground.jpg';
 import targetImage from '../../assets/Images/Target.png';
 
-const TARGET_SIZE = 80;
+const TARGET_SIZE = 75;
 
 export default function TrainOrcsScreen() {
   const { user } = useAuth();
@@ -159,6 +159,14 @@ export default function TrainOrcsScreen() {
                   {'<'} swipe for ranged training {'>'}
                 </Text>
               </Parchment>
+              <Button
+                label={cheatMode ? 'Cheat x10: ON' : 'Cheat x10: OFF'}
+                onPress={() => dispatch(toggleCheatMode())}
+                style={styles.cheatBtn}
+                textStyle={styles.cheatBtnLabel}
+                compact
+                noLift
+              />
             </View>
 
             {/* Panel 1 · Ranged */}
@@ -196,20 +204,17 @@ export default function TrainOrcsScreen() {
                   {'<'} swipe for melee training {'>'}
                 </Text>
               </Parchment>
+              <Button
+                label={cheatMode ? 'Cheat x10: ON' : 'Cheat x10: OFF'}
+                onPress={() => dispatch(toggleCheatMode())}
+                style={styles.cheatBtn}
+                textStyle={styles.cheatBtnLabel}
+                compact
+                noLift
+              />
             </View>
 
           </Animated.View>
-        </View>
-
-        <View style={styles.cheatBtnOverlay} pointerEvents="box-none">
-          <Button
-            label={cheatMode ? 'Cheat x10: ON' : 'Cheat x10: OFF'}
-            onPress={() => dispatch(toggleCheatMode())}
-            style={styles.cheatBtn}
-            textStyle={styles.cheatBtnLabel}
-            compact
-            noLift
-          />
         </View>
 
         <View style={styles.headerOverlay} pointerEvents="none">
@@ -226,7 +231,7 @@ const styles = StyleSheet.create({
   safe: { flex: 1 },
   viewport: { flex: 1, overflow: 'hidden' },
   slidingRow: { flex: 1, flexDirection: 'row' },
-  parchment: { width: '100%', marginTop: 10 },
+  parchment: { width: '100%', marginTop: 24 },
   parchmentContent: { paddingTop: 16, paddingBottom: 16, paddingHorizontal: spacing.xs, gap: 2 },
   panel: {
     flex: 1,
@@ -238,7 +243,7 @@ const styles = StyleSheet.create({
   },
   anvilArea: {
     width: '100%',
-    height: 185,
+    height: 130,
     alignItems: 'center',
     justifyContent: 'center',
   },
@@ -248,10 +253,10 @@ const styles = StyleSheet.create({
     width: '100%',
     color: colors.text,
   },
-  anvilImg: { width: 185, height: 185 },
+  anvilImg: { width: 170, height: 170 },
   targetZone: {
     width: '100%',
-    height: 185,
+    height: 150,
     overflow: 'hidden',
   },
   targetMover: { position: 'absolute' },
@@ -268,7 +273,6 @@ const styles = StyleSheet.create({
     marginBottom: 12,
   },
   headerOverlay: { position: 'absolute', top: 0, left: 0, right: 0 },
-  cheatBtnOverlay: { position: 'absolute', bottom: BAR_HEIGHT + CLAW_OVERHANG / 4, left: 0, right: 0, alignItems: 'center' },
-  cheatBtn: { width: '50%', opacity: 0.45 },
+  cheatBtn: { width: '50%', opacity: 0.45, alignSelf: 'center' },
   cheatBtnLabel: { fontSize: 11, letterSpacing: 1 },
 });

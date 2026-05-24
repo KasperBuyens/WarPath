@@ -126,7 +126,7 @@ const styles = StyleSheet.create({
     tintColor: colors.textLight,
   },
   bottomStrip: {
-    height: 12,
+    height: 40,
     backgroundColor: colors.statusBar,
   },
 });
