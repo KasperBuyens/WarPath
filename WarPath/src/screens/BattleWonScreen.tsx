@@ -16,6 +16,7 @@ import { BATTLES } from '../data/battles';
 import { getMeleeLossMultiplier, getRangeLossMultiplier } from '../data/leaders';
 import { db } from '../firebase';
 import type { RootStackParamList } from '../navigation/RootNavigator';
+import { battleLayout } from '../styles/battleLayout';
 import { colors, spacing, typography } from '../theme';
 
 type BattleWonNavProp = NativeStackNavigationProp<RootStackParamList, 'BattleWon'>;
@@ -69,14 +70,14 @@ export default function BattleWonScreen() {
   }, [user, params.tribeId, battle]);
 
   return (
-    <ImageBackground source={background} style={styles.background} resizeMode="cover">
-      <SafeAreaView style={styles.safeArea} edges={['left', 'right']}>
-        <View style={[styles.content, { paddingVertical: insets.top + spacing.md }]}>
+    <ImageBackground source={background} style={battleLayout.background} resizeMode="cover">
+      <SafeAreaView style={battleLayout.safeArea} edges={['left', 'right']}>
+        <View style={[battleLayout.content, { paddingVertical: insets.top + spacing.md }]}>
 
-          <ScrollView style={styles.infoPanel} showsVerticalScrollIndicator={false} bounces={false}>
-            <Parchment style={styles.parchmentWrap} contentStyle={styles.parchmentContent}>
-              <Text style={styles.title}>{battle.victoryTitle}</Text>
-              <Text style={styles.lore}>{battle.victoryLore}</Text>
+          <ScrollView style={battleLayout.infoPanel} showsVerticalScrollIndicator={false} bounces={false}>
+            <Parchment style={battleLayout.parchmentWrap} contentStyle={battleLayout.parchmentContent}>
+              <Text style={battleLayout.title}>{battle.victoryTitle}</Text>
+              <Text style={battleLayout.lore}>{battle.victoryLore}</Text>
 
               <Divider />
 
@@ -96,20 +97,20 @@ export default function BattleWonScreen() {
                 <Button
                   label="Celebrate your Victory!"
                   onPress={() => { goingToVictory.current = true; navigation.navigate('Victory'); }}
-                  textStyle={styles.btnLabel}
+                  textStyle={battleLayout.btnLabel}
                 />
               ) : (
                 <Button
                   label="Return to Map"
                   onPress={() => navigation.navigate('WarTabs')}
-                  textStyle={styles.btnLabel}
+                  textStyle={battleLayout.btnLabel}
                 />
               )}
             </Parchment>
           </ScrollView>
 
-          <View style={styles.imagePanel}>
-            <Image source={battle.victoryImage} style={styles.battleImage} resizeMode="contain" />
+          <View style={[battleLayout.imagePanel, styles.imagePanel]}>
+            <Image source={battle.victoryImage} style={battleLayout.fullImage} resizeMode="contain" />
           </View>
 
         </View>
@@ -119,46 +120,6 @@ export default function BattleWonScreen() {
 }
 
 const styles = StyleSheet.create({
-  background: { flex: 1 },
-  safeArea: { flex: 1 },
-  content: {
-    flex: 1,
-    flexDirection: 'row',
-    paddingHorizontal: spacing.md,
-    gap: spacing.md,
-  },
-  infoPanel: {
-    width: '40%',
-  },
-  parchmentWrap: {
-    width: '100%',
-  },
-  parchmentContent: {
-    paddingVertical: spacing.sm,
-    paddingHorizontal: spacing.md,
-    gap: spacing.xs,
-    alignItems: 'flex-start',
-  },
-  imagePanel: {
-    width: '60%',
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  battleImage: {
-    width: '100%',
-    height: '100%',
-  },
-  title: {
-    ...typography.body,
-    fontFamily: 'CaesarDressing',
-    color: colors.text,
-    width: '100%',
-  },
-  lore: {
-    ...typography.small,
-    color: colors.text,
-    lineHeight: 18,
-  },
   lossHeading: {
     ...typography.caption,
     fontWeight: '700',
@@ -168,8 +129,5 @@ const styles = StyleSheet.create({
     ...typography.small,
     color: colors.text,
   },
-  btnLabel: {
-    fontSize: 13,
-    letterSpacing: 1,
-  },
+  imagePanel: { width: '60%' },
 });

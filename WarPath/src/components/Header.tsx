@@ -1,7 +1,7 @@
 import { Image, StyleSheet, Text, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
-import { BAR_HEIGHT, CLAW_OVERHANG, colors } from '../theme';
+import { navHeight, clawOverhang, colors } from '../theme';
 
 import toothBig from '../../assets/Images/ToothBig.png';
 import toothSmall from '../../assets/Images/ToothSmall.png';
@@ -43,17 +43,17 @@ export default function Header({ title }: HeaderProps) {
 const styles = StyleSheet.create({
   statusBarFill: {
     width: '100%',
-    backgroundColor: colors.statusBar,
+    backgroundColor: colors.primaryDarkest,
   },
   container: {
     width: '100%',
-    height: BAR_HEIGHT + CLAW_OVERHANG,
+    height: navHeight + clawOverhang,
     overflow: 'hidden',
   },
   bar: {
     flexDirection: 'row',
     alignItems: 'flex-start',
-    height: BAR_HEIGHT,
+    height: navHeight,
     backgroundColor: colors.primary,
     borderBottomWidth: 2,
     borderBottomColor: colors.primaryDark,
@@ -65,7 +65,7 @@ const styles = StyleSheet.create({
   },
   colTitle: {
     width: '52%',
-    height: BAR_HEIGHT,
+    height: navHeight,
     alignItems: 'center',
     justifyContent: 'center',
   },

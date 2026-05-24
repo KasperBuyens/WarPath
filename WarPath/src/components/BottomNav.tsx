@@ -6,7 +6,7 @@ import { Image, Pressable, StyleSheet, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import type { RootStackParamList } from '../navigation/RootNavigator';
-import { BAR_HEIGHT, CLAW_OVERHANG, colors } from '../theme';
+import { navHeight, clawOverhang, colors } from '../theme';
 
 import anvilLogo from '../../assets/Images/AnvilLogo.png';
 import toothSmall from '../../assets/Images/ToothSmall.png';
@@ -27,6 +27,7 @@ export default function BottomNav({ tabProps }: Props) {
     <View style={styles.wrapper} pointerEvents="box-none">
       <View style={styles.container} pointerEvents="box-none">
         <View style={styles.bar}>
+          
           <View style={styles.toothColLeft} pointerEvents="none">
             <Image source={toothSmall} style={styles.tooth} resizeMode="contain" />
           </View>
@@ -58,6 +59,7 @@ export default function BottomNav({ tabProps }: Props) {
           <View style={styles.toothColRight} pointerEvents="none">
             <Image source={toothSmall} style={[styles.tooth, styles.flipH]} resizeMode="contain" />
           </View>
+          
         </View>
       </View>
 
@@ -76,14 +78,14 @@ const styles = StyleSheet.create({
   },
   container: {
     width: '100%',
-    height: BAR_HEIGHT + CLAW_OVERHANG,
+    height: navHeight + clawOverhang,
     overflow: 'hidden',
     transform: [{ scaleY: -1 }],
   },
   bar: {
     flexDirection: 'row',
     alignItems: 'flex-start',
-    height: BAR_HEIGHT,
+    height: navHeight,
     backgroundColor: colors.primary,
     borderBottomWidth: 2,
     borderBottomColor: colors.primaryDark,
@@ -102,7 +104,7 @@ const styles = StyleSheet.create({
   },
   btnItem: {
     flex: 1,
-    height: BAR_HEIGHT,
+    height: navHeight,
     alignItems: 'center',
     justifyContent: 'center',
   },
@@ -127,6 +129,6 @@ const styles = StyleSheet.create({
   },
   bottomStrip: {
     height: 40,
-    backgroundColor: colors.statusBar,
+    backgroundColor: colors.primaryDarkest,
   },
 });

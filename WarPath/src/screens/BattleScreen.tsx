@@ -16,6 +16,7 @@ import { BATTLES } from '../data/battles';
 import { getMeleeMultiplier, getRangeMultiplier } from '../data/leaders';
 import { db } from '../firebase';
 import type { RootStackParamList } from '../navigation/RootNavigator';
+import { battleLayout } from '../styles/battleLayout';
 import { colors, spacing, typography } from '../theme';
 import type { Tribe } from '../types';
 
@@ -76,14 +77,14 @@ export default function BattleScreen() {
   }
 
   return (
-    <ImageBackground source={background} style={styles.background} resizeMode="cover">
-      <SafeAreaView style={styles.safeArea} edges={['left', 'right']}>
-        <View style={[styles.content, { paddingVertical: insets.top + spacing.md }]}>
+    <ImageBackground source={background} style={battleLayout.background} resizeMode="cover">
+      <SafeAreaView style={battleLayout.safeArea} edges={['left', 'right']}>
+        <View style={[battleLayout.content, { paddingVertical: insets.top + spacing.md }]}>
 
-          <ScrollView style={styles.infoPanel} showsVerticalScrollIndicator={false} bounces={false}>
-            <Parchment style={styles.parchmentWrap} contentStyle={styles.parchmentContent}>
-              <Text style={styles.title}>{battle.title}</Text>
-              <Text style={styles.lore}>{battle.lore}</Text>
+          <ScrollView style={battleLayout.infoPanel} showsVerticalScrollIndicator={false} bounces={false}>
+            <Parchment style={battleLayout.parchmentWrap} contentStyle={battleLayout.parchmentContent}>
+              <Text style={[battleLayout.title, styles.titleCenter]}>{battle.title}</Text>
+              <Text style={battleLayout.lore}>{battle.lore}</Text>
 
               <Divider />
 
@@ -94,14 +95,14 @@ export default function BattleScreen() {
               <Divider />
 
               <View style={styles.buttonRow}>
-                <Button label="Attack!" onPress={handleAttack} style={styles.btn} textStyle={styles.btnLabel} disabled={!hasEnoughTroops} />
-                <Button label="Retreat" onPress={() => navigation.goBack()} style={styles.btn} textStyle={styles.btnLabel} />
+                <Button label="Attack!" onPress={handleAttack} style={styles.btn} textStyle={battleLayout.btnLabel} disabled={!hasEnoughTroops} />
+                <Button label="Retreat" onPress={() => navigation.goBack()} style={styles.btn} textStyle={battleLayout.btnLabel} />
               </View>
             </Parchment>
           </ScrollView>
 
-          <View style={styles.imagePanel}>
-            <Image source={battle.image} style={styles.battleImage} resizeMode="contain" />
+          <View style={[battleLayout.imagePanel, styles.imagePanel]}>
+            <Image source={battle.image} style={battleLayout.fullImage} resizeMode="contain" />
           </View>
 
         </View>
@@ -111,47 +112,7 @@ export default function BattleScreen() {
 }
 
 const styles = StyleSheet.create({
-  background: { flex: 1 },
-  safeArea: { flex: 1 },
-  content: {
-    flex: 1,
-    flexDirection: 'row',
-    paddingHorizontal: spacing.md,
-    gap: spacing.md,
-  },
-  infoPanel: {
-    width: '40%',
-  },
-  parchmentWrap: {
-    width: '100%',
-  },
-  parchmentContent: {
-    paddingVertical: spacing.sm,
-    paddingHorizontal: spacing.md,
-    gap: spacing.xs,
-    alignItems: 'flex-start',
-  },
-  imagePanel: {
-    width: '60%',
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  battleImage: {
-    width: '100%',
-    height: '100%',
-  },
-  title: {
-    ...typography.body,
-    fontFamily: 'CaesarDressing',
-    color: colors.text,
-    width: '100%',
-    textAlign: 'center',
-  },
-  lore: {
-    ...typography.small,
-    color: colors.text,
-    lineHeight: 18,
-  },
+  titleCenter: { textAlign: 'center' },
   troopsHeading: {
     ...typography.caption,
     fontWeight: '700',
@@ -165,11 +126,6 @@ const styles = StyleSheet.create({
     width: '100%',
     gap: spacing.xs,
   },
-  btn: {
-    width: '100%',
-  },
-  btnLabel: {
-    fontSize: 13,
-    letterSpacing: 1,
-  },
+  btn: { width: '100%' },
+  imagePanel: { width: '60%' },
 });

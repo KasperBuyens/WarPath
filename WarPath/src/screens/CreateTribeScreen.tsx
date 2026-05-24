@@ -29,7 +29,7 @@ import { LEADERS } from '../data/leaders';
 import { db } from '../firebase';
 import type { RootStackParamList } from '../navigation/RootNavigator';
 import { authFormStyles } from '../styles/authForm';
-import { colors, HEADER_HEIGHT, parchmentWidth, spacing } from '../theme';
+import { colors, headerHeight, headerOverlay, parchmentWidth, spacing } from '../theme';
 
 import background from '../../assets/Images/StoneBackground.jpg';
 
@@ -91,7 +91,7 @@ export default function CreateTribeScreen() {
           behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
         >
           <ScrollView
-            contentContainerStyle={[styles.scrollContent, { paddingTop: insets.top + HEADER_HEIGHT + spacing.sm }]}
+            contentContainerStyle={[styles.scrollContent, { paddingTop: insets.top + headerHeight + spacing.sm }]}
             showsVerticalScrollIndicator={false}
             keyboardShouldPersistTaps="handled"
           >
@@ -150,7 +150,7 @@ export default function CreateTribeScreen() {
           </ScrollView>
         </KeyboardAvoidingView>
 
-        <View style={styles.headerOverlay} pointerEvents="none">
+        <View style={headerOverlay} pointerEvents="none">
           <Header title="RAISE TRIBE" />
         </View>
       </SafeAreaView>
@@ -162,7 +162,6 @@ const styles = StyleSheet.create({
   background: { flex: 1 },
   safeArea: { flex: 1 },
   body: { flex: 1 },
-  headerOverlay: { position: 'absolute', top: 0, left: 0, right: 0 },
   scrollContent: {
     paddingHorizontal: spacing.md,
     paddingBottom: spacing.lg,

@@ -2,8 +2,9 @@ import { useNavigation } from '@react-navigation/native';
 import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { signOut } from 'firebase/auth';
 import { collection, deleteDoc, doc, onSnapshot } from 'firebase/firestore';
-import { useEffect, useRef, useState } from 'react';
-import { ActivityIndicator, Animated, StyleSheet, Text, View, useWindowDimensions } from 'react-native';
+import { useEffect, useState } from 'react';
+import { ActivityIndicator, StyleSheet, Text, View } from 'react-native';
+import PagerView from 'react-native-pager-view';
 
 import ActionButton from '../components/ActionButton';
 import Button from '../components/Button';
@@ -15,7 +16,6 @@ import TribeCard from '../components/TribeCard';
 import { useAuth } from '../contexts/AuthContext';
 import { auth, db } from '../firebase';
 import type { RootStackParamList } from '../navigation/RootNavigator';
-import { useSlideSwipe } from '../hooks/useSlideSwipe';
 import { useAppDispatch } from '../store';
 import { setActiveTribe } from '../store/tribeSlice';
 import { colors, darkTextShadow, parchmentWidth, spacing } from '../theme';
@@ -29,23 +29,13 @@ export default function HubScreen() {
   const dispatch = useAppDispatch();
   const [tribes, setTribes] = useState<Tribe[]>([]);
   const [loading, setLoading] = useState(true);
-  const [index, setIndex] = useState(0);
-  const [showConfirm, setShowConfirm] = useState(false);
-  const tribesLengthRef = useRef(0);
-  const { width: screenWidth } = useWindowDimensions();
-  const { slideAnim, panHandlers } = useSlideSwipe({
-    screenWidth,
-    countRef: tribesLengthRef,
-    wrap: false,
-    onIndexChange: setIndex,
-  });
+  const [tribeToDelete, setTribeToDelete] = useState<Tribe | null>(null);
 
   useEffect(() => {
     if (!user) return;
     const tribesRef = collection(db, 'users', user.uid, 'tribes');
     return onSnapshot(tribesRef, (snapshot) => {
       const data = snapshot.docs.map((d) => ({ id: d.id, ...d.data() } as Tribe));
-      tribesLengthRef.current = data.length + 1;
       setTribes(data);
       setLoading(false);
     });
@@ -76,8 +66,6 @@ export default function HubScreen() {
     );
   }
 
-  const tribe = tribes[Math.min(index, tribes.length - 1)];
-
   return (
     <ScreenLayout title="SELECT TRIBE">
       <View style={styles.body}>
@@ -94,49 +82,43 @@ export default function HubScreen() {
           <View style={styles.content}>
             <Text style={styles.swipeHint}>← Swipe to cycle thy warbands →</Text>
 
-            <View style={styles.cardViewport}>
-              <Animated.View
-                style={[styles.cardRow, { width: screenWidth * (tribes.length + 1), transform: [{ translateX: slideAnim }] }]}
-                {...panHandlers}
-              >
-                {tribes.map((t) => (
-                  <View key={t.id} style={[styles.cardSlot, { width: screenWidth }]}>
-                    <TribeCard {...t} />
+            <PagerView style={styles.pager} initialPage={0}>
+              {tribes.map((t) => (
+                <View key={t.id} style={styles.cardSlot}>
+                  <TribeCard {...t} />
+                  <View style={styles.actions}>
+                    <ActionButton onPress={() => navigation.navigate('CreateTribe')} style={styles.sideButton}>
+                      <Text style={styles.actionIcon}>＋</Text>
+                    </ActionButton>
+                    <Button
+                      label="To War"
+                      onPress={() => handleGoToWar(t.id)}
+                      style={styles.warButton}
+                    />
+                    <ActionButton onPress={() => setTribeToDelete(t)} style={styles.sideButton}>
+                      <Text style={styles.actionIcon}>🗑</Text>
+                    </ActionButton>
                   </View>
-                ))}
-                <View style={[styles.cardSlot, styles.homeSlot, { width: screenWidth }]}>
-                  <Parchment style={styles.homeCard}>
-                    <Text style={styles.emptyText}>Return to Login</Text>
-                    <Text style={styles.emptySubText}>Abandon thy warbands for now.</Text>
-                    <Divider />
-                    <Button label="Logout" onPress={handleLogout} />
-                  </Parchment>
                 </View>
-              </Animated.View>
-            </View>
-
-            {index < tribes.length && (
-              <View style={styles.actions}>
-                <ActionButton onPress={() => navigation.navigate('CreateTribe')} style={styles.sideButton}>
-                  <Text style={styles.actionIcon}>＋</Text>
-                </ActionButton>
-                <Button
-                  label="To War"
-                  onPress={() => handleGoToWar(tribe.id)}
-                  style={styles.warButton}
-                />
-                <ActionButton onPress={() => setShowConfirm(true)} style={styles.sideButton}>
-                  <Text style={styles.actionIcon}>🗑</Text>
-                </ActionButton>
+              ))}
+              <View key="logout" style={[styles.cardSlot, styles.homeSlot]}>
+                <Parchment style={styles.homeCard}>
+                  <Text style={styles.emptyText}>Return to Login</Text>
+                  <Text style={styles.emptySubText}>Abandon thy warbands for now.</Text>
+                  <Divider />
+                  <Button label="Logout" onPress={handleLogout} />
+                </Parchment>
               </View>
-            )}
+            </PagerView>
 
-            <ConfirmModal
-              visible={showConfirm}
-              tribeName={tribe.name}
-              onCancel={() => setShowConfirm(false)}
-              onConfirm={() => { setShowConfirm(false); handleDelete(tribe.id); }}
-            />
+            {tribeToDelete && (
+              <ConfirmModal
+                visible
+                tribeName={tribeToDelete.name}
+                onCancel={() => setTribeToDelete(null)}
+                onConfirm={() => { handleDelete(tribeToDelete.id); setTribeToDelete(null); }}
+              />
+            )}
           </View>
         )}
       </View>
@@ -159,26 +141,24 @@ const styles = StyleSheet.create({
     paddingTop: spacing.sm,
   },
   content: {
+    flex: 1,
     width: '100%',
     alignItems: 'center',
     gap: spacing.sm,
   },
-  cardViewport: {
+  pager: {
     alignSelf: 'stretch',
     marginHorizontal: -spacing.md,
-    overflow: 'hidden',
-  },
-  cardRow: {
-    flexDirection: 'row',
+    flex: 1,
   },
   cardSlot: {
     paddingHorizontal: spacing.md,
+    paddingBottom: spacing.md,
+    gap: spacing.sm,
   },
   actions: {
     flexDirection: 'row',
     gap: spacing.sm,
-    marginTop: spacing.sm,
-    width: '100%',
   },
   sideButton: { flex: 1 },
   warButton: { flex: 3 },
@@ -193,7 +173,6 @@ const styles = StyleSheet.create({
     fontStyle: 'italic',
     letterSpacing: 1,
     marginTop: -55,
-    marginBottom: spacing.sm,
   },
   homeSlot: {
     justifyContent: 'center',

@@ -11,7 +11,7 @@ import { useAuth } from '../contexts/AuthContext';
 import { db } from '../firebase';
 import type { RootStackParamList } from '../navigation/RootNavigator';
 import { useAppSelector } from '../store';
-import { BAR_HEIGHT, CLAW_OVERHANG, colors, HEADER_HEIGHT, PARCHMENT_WIDTH_RATIO, spacing } from '../theme';
+import { navHeight, clawOverhang, colors, headerHeight, headerOverlay, spacing } from '../theme';
 import type { Tribe } from '../types';
 
 import ambushButton from '../../assets/Images/AmbushButton.png';
@@ -41,13 +41,13 @@ export default function MapScreen() {
 
   const tribeId = useAppSelector((s) => s.tribe.activeTribeId);
 
-  const mapWidth = screenWidth * PARCHMENT_WIDTH_RATIO;
+  const mapWidth = screenWidth * 0.85;
   const mapHeight = mapWidth * (IMG_H / IMG_W);
 
   const scrollContentStyle = useMemo(() => ({
     alignItems: 'center' as const,
-    paddingTop: insets.top + HEADER_HEIGHT + spacing.md,
-    paddingBottom: insets.bottom + BAR_HEIGHT + CLAW_OVERHANG,
+    paddingTop: insets.top + headerHeight + spacing.md,
+    paddingBottom: insets.bottom + navHeight + clawOverhang,
   }), [insets.top, insets.bottom]);
 
   useEffect(() => {
@@ -91,7 +91,7 @@ export default function MapScreen() {
           </View>
         </ScrollView>
 
-        <View style={styles.headerOverlay} pointerEvents="none">
+        <View style={headerOverlay} pointerEvents="none">
           <Header title="BATTLE PLAN" />
         </View>
       </SafeAreaView>
@@ -105,7 +105,7 @@ const styles = StyleSheet.create({
   scroll: { flex: 1 },
   mapFrame: {
     borderWidth: 4,
-    borderColor: colors.border,
+    borderColor: colors.MapBorder,
     borderRadius: 4,
     overflow: 'hidden',
   },
@@ -113,5 +113,4 @@ const styles = StyleSheet.create({
     width: '100%',
     height: '100%',
   },
-  headerOverlay: { position: 'absolute', top: 0, left: 0, right: 0 },
 });

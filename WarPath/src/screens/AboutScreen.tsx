@@ -16,7 +16,7 @@ import Header from '../components/Header';
 import OOC from '../components/OOC';
 import Parchment from '../components/Parchment';
 import type { RootStackParamList } from '../navigation/RootNavigator';
-import { colors, HEADER_HEIGHT, spacing, typography } from '../theme';
+import { colors, headerHeight, headerOverlay, spacing, typography } from '../theme';
 
 import background from '../../assets/Images/StoneBackground.jpg';
 
@@ -31,7 +31,7 @@ export default function AboutScreen() {
     <ImageBackground source={background} style={styles.background} resizeMode="cover">
       <SafeAreaView style={styles.safeArea} edges={['bottom']}>
         <ScrollView
-          contentContainerStyle={[styles.scrollContent, { paddingTop: insets.top + HEADER_HEIGHT + spacing.sm }]}
+          contentContainerStyle={[styles.scrollContent, { paddingTop: insets.top + headerHeight + spacing.sm }]}
           showsVerticalScrollIndicator={false}
         >
           <Parchment style={styles.parchment}>
@@ -87,7 +87,7 @@ export default function AboutScreen() {
           </Parchment>
         </ScrollView>
 
-        <View style={styles.headerOverlay} pointerEvents="none">
+        <View style={headerOverlay} pointerEvents="none">
           <Header title="WARPATH" />
         </View>
       </SafeAreaView>
@@ -100,7 +100,6 @@ const styles = StyleSheet.create({
   screen: { flex: 1 },
   background: { flex: 1 },
   safeArea: { flex: 1 },
-  headerOverlay: { position: 'absolute', top: 0, left: 0, right: 0 },
   scrollContent: {
     paddingHorizontal: spacing.md,
     paddingBottom: spacing.lg,

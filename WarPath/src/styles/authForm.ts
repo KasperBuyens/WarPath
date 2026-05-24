@@ -18,7 +18,7 @@ export const authFormStyles = StyleSheet.create({
     gap: spacing.sm,
   },
   error: {
-    color: colors.error,
+    color: colors.errorMessage,
     fontSize: 13,
     marginTop: -6,
   },

@@ -8,21 +8,20 @@ import {
   Pressable,
   StyleSheet,
   Text,
-  useWindowDimensions,
   View,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import PagerView from 'react-native-pager-view';
 
 import Button from '../components/Button';
 import Divider from '../components/Divider';
 import Header from '../components/Header';
 import Parchment from '../components/Parchment';
-import { useSlideSwipe } from '../hooks/useSlideSwipe';
 import { useAuth } from '../contexts/AuthContext';
 import { db } from '../firebase';
 import { useAppDispatch, useAppSelector } from '../store';
 import { toggleCheatMode } from '../store/settingsSlice';
-import { colors, HEADER_HEIGHT, spacing, typography } from '../theme';
+import { colors, headerHeight, headerOverlay, spacing, typography } from '../theme';
 
 import anvilImage from '../../assets/Images/Anvil.png';
 import background from '../../assets/Images/StoneBackground.jpg';
@@ -32,7 +31,6 @@ const TARGET_SIZE = 75;
 
 export default function TrainOrcsScreen() {
   const { user } = useAuth();
-  const { width: screenWidth } = useWindowDimensions();
   const dispatch = useAppDispatch();
 
   const tribeId = useAppSelector((s) => s.tribe.activeTribeId);
@@ -42,9 +40,6 @@ export default function TrainOrcsScreen() {
   const [rangeCount, setRangeCount] = useState(0);
   const [sessionMelee, setSessionMelee] = useState(0);
   const [sessionArcher, setSessionArcher] = useState(0);
-
-  const panelCountRef = useRef(2);
-  const { slideAnim, panHandlers } = useSlideSwipe({ screenWidth, countRef: panelCountRef });
 
   const anvilScale = useRef(new Animated.Value(1)).current;
   const targetPos = useRef(new Animated.ValueXY({ x: 0, y: 0 })).current;
@@ -121,103 +116,92 @@ export default function TrainOrcsScreen() {
     <ImageBackground source={background} style={styles.bg} resizeMode="cover">
       <SafeAreaView style={styles.safe} edges={[]}>
 
-        <View style={styles.viewport} {...panHandlers}>
-          <Animated.View
-            style={[
-              styles.slidingRow,
-              { width: screenWidth * 2, transform: [{ translateX: slideAnim }] },
-            ]}
-          >
+        <PagerView style={styles.pager} initialPage={0}>
 
-            {/* Panel 0 · Melee */}
-            <View
-              style={[styles.panel, { width: screenWidth }]}
-            >
-              <Parchment style={styles.parchment} contentStyle={styles.parchmentContent}>
+          {/* Page 0 · Melee */}
+          <View key="melee" style={styles.panel}>
+            <Parchment style={styles.parchment} contentStyle={styles.parchmentContent}>
 
-                <Text style={[styles.bodyText, { textAlign: 'center' }]}>
-                  Hammer the anvil to arm your warriors!
-                </Text>
+              <Text style={[styles.bodyText, { textAlign: 'center' }]}>
+                Hammer the anvil to arm your warriors!
+              </Text>
 
-                <Text style={[styles.countText, { color: colors.won, textAlign: 'center' }]}>
-                  Warriors armed: {meleeCount + sessionMelee}
-                </Text>
+              <Text style={[styles.countText, { color: colors.won, textAlign: 'center' }]}>
+                Warriors armed: {meleeCount + sessionMelee}
+              </Text>
 
-                <Divider />
+              <Divider />
 
-                <Pressable onPress={trainMelee} style={styles.anvilArea}>
-                  <Animated.Image
-                    source={anvilImage}
-                    style={[styles.anvilImg, { transform: [{ scale: anvilScale }] }]}
-                    resizeMode="contain"
-                  />
-                </Pressable>
+              <Pressable onPress={trainMelee} style={styles.anvilArea}>
+                <Animated.Image
+                  source={anvilImage}
+                  style={[styles.anvilImg, { transform: [{ scale: anvilScale }] }]}
+                  resizeMode="contain"
+                />
+              </Pressable>
 
-                <Divider />
+              <Divider />
 
-                <Text style={[styles.swipeHint, { textAlign: 'center' }]}>
-                  {'<'} swipe for ranged training {'>'}
-                </Text>
-              </Parchment>
-              <Button
-                label={cheatMode ? 'Cheat x10: ON' : 'Cheat x10: OFF'}
-                onPress={() => dispatch(toggleCheatMode())}
-                style={styles.cheatBtn}
-                textStyle={styles.cheatBtnLabel}
-                compact
-                noLift
-              />
-            </View>
+              <Text style={[styles.swipeHint, { textAlign: 'center' }]}>
+                {'<'} swipe for ranged training {'>'}
+              </Text>
+            </Parchment>
+            <Button
+              label={cheatMode ? 'Cheat x10: ON' : 'Cheat x10: OFF'}
+              onPress={() => dispatch(toggleCheatMode())}
+              style={styles.cheatBtn}
+              textStyle={styles.cheatBtnLabel}
+              compact
+              noLift
+            />
+          </View>
 
-            {/* Panel 1 · Ranged */}
-            <View
-              style={[styles.panel, { width: screenWidth }]}
-            >
-              <Parchment style={styles.parchment} contentStyle={styles.parchmentContent}>
-                <Text style={[styles.bodyText, { textAlign: 'center' }]}>
-                  Hit the target to train archers!
-                </Text>
+          {/* Page 1 · Ranged */}
+          <View key="ranged" style={styles.panel}>
+            <Parchment style={styles.parchment} contentStyle={styles.parchmentContent}>
+              <Text style={[styles.bodyText, { textAlign: 'center' }]}>
+                Hit the target to train archers!
+              </Text>
 
-                <Text style={[styles.countText, { color: colors.won, textAlign: 'center' }]}>
-                  Archers trained: {rangeCount + sessionArcher}
-                </Text>
+              <Text style={[styles.countText, { color: colors.won, textAlign: 'center' }]}>
+                Archers trained: {rangeCount + sessionArcher}
+              </Text>
 
-                <Divider />
+              <Divider />
 
-                <View
-                  style={styles.targetZone}
-                  onLayout={(e) => {
-                    zoneWidth.current = e.nativeEvent.layout.width;
-                    zoneHeight.current = e.nativeEvent.layout.height;
-                  }}
-                >
-                  <Animated.View style={[styles.targetMover, targetPos.getLayout()]}>
-                    <Pressable onPress={trainArcher}>
-                      <Image source={targetImage} style={styles.targetImg} resizeMode="contain" />
-                    </Pressable>
-                  </Animated.View>
-                </View>
+              <View
+                style={styles.targetZone}
+                onLayout={(e) => {
+                  zoneWidth.current = e.nativeEvent.layout.width;
+                  zoneHeight.current = e.nativeEvent.layout.height;
+                }}
+              >
+                <Animated.View style={[styles.targetMover, targetPos.getLayout()]}>
+                  <Pressable onPress={trainArcher}>
+                    <Image source={targetImage} style={styles.targetImg} resizeMode="contain" />
+                  </Pressable>
+                </Animated.View>
+              </View>
 
-                <Divider />
+              <Divider />
 
-                <Text style={[styles.swipeHint, { textAlign: 'center' }]}>
-                  {'<'} swipe for melee training {'>'}
-                </Text>
-              </Parchment>
-              <Button
-                label={cheatMode ? 'Cheat x10: ON' : 'Cheat x10: OFF'}
-                onPress={() => dispatch(toggleCheatMode())}
-                style={styles.cheatBtn}
-                textStyle={styles.cheatBtnLabel}
-                compact
-                noLift
-              />
-            </View>
+              <Text style={[styles.swipeHint, { textAlign: 'center' }]}>
+                {'<'} swipe for melee training {'>'}
+              </Text>
+            </Parchment>
+            <Button
+              label={cheatMode ? 'Cheat x10: ON' : 'Cheat x10: OFF'}
+              onPress={() => dispatch(toggleCheatMode())}
+              style={styles.cheatBtn}
+              textStyle={styles.cheatBtnLabel}
+              compact
+              noLift
+            />
+          </View>
 
-          </Animated.View>
-        </View>
+        </PagerView>
 
-        <View style={styles.headerOverlay} pointerEvents="none">
+        <View style={headerOverlay} pointerEvents="none">
           <Header title="TRAIN ORCS" />
         </View>
 
@@ -229,8 +213,7 @@ export default function TrainOrcsScreen() {
 const styles = StyleSheet.create({
   bg: { flex: 1 },
   safe: { flex: 1 },
-  viewport: { flex: 1, overflow: 'hidden' },
-  slidingRow: { flex: 1, flexDirection: 'row' },
+  pager: { flex: 1 },
   parchment: { width: '100%', marginTop: 24 },
   parchmentContent: { paddingTop: 16, paddingBottom: 16, paddingHorizontal: spacing.xs, gap: 2 },
   panel: {
@@ -239,11 +222,11 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     gap: spacing.sm,
     justifyContent: 'flex-start',
-    paddingTop: HEADER_HEIGHT - 15,
+    paddingTop: headerHeight - 15,
   },
   anvilArea: {
     width: '100%',
-    height: 130,
+    height: 110,
     alignItems: 'center',
     justifyContent: 'center',
   },
@@ -256,7 +239,7 @@ const styles = StyleSheet.create({
   anvilImg: { width: 170, height: 170 },
   targetZone: {
     width: '100%',
-    height: 150,
+    height: 110,
     overflow: 'hidden',
   },
   targetMover: { position: 'absolute' },
@@ -272,7 +255,6 @@ const styles = StyleSheet.create({
     letterSpacing: 1,
     marginBottom: 12,
   },
-  headerOverlay: { position: 'absolute', top: 0, left: 0, right: 0 },
   cheatBtn: { width: '50%', opacity: 0.45, alignSelf: 'center' },
   cheatBtnLabel: { fontSize: 11, letterSpacing: 1 },
 });

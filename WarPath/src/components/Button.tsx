@@ -9,7 +9,7 @@ import {
   type ViewStyle,
 } from 'react-native';
 
-import { BUTTON_LIFT, colors, darkTextShadow } from '../theme';
+import { buttonLift, colors, darkTextShadow } from '../theme';
 
 type ButtonProps = {
   label: string;
@@ -70,7 +70,7 @@ const styles = StyleSheet.create({
   },
   base: {
     position: 'absolute',
-    top: BUTTON_LIFT,
+    top: buttonLift,
     left: 0,
     right: 0,
     bottom: 0,
@@ -86,14 +86,14 @@ const styles = StyleSheet.create({
     borderColor: colors.primaryDark,
     alignItems: 'center',
     justifyContent: 'center',
-    marginBottom: BUTTON_LIFT,
+    marginBottom: buttonLift,
   },
   buttonCompact: {
     paddingVertical: 8,
     paddingHorizontal: 10,
   },
   pressed: {
-    transform: [{ translateY: BUTTON_LIFT }],
+    transform: [{ translateY: buttonLift }],
     marginBottom: 0,
   },
   pressedScale: {

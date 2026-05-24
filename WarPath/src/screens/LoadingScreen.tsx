@@ -3,8 +3,6 @@ import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { useEffect } from 'react';
 import { Image, StyleSheet, View } from 'react-native';
 
-import { colors } from '../theme';
-
 import { useAuth } from '../contexts/AuthContext';
 import type { RootStackParamList } from '../navigation/RootNavigator';
 
@@ -34,7 +32,7 @@ export default function LoadingScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: colors.black,
+    backgroundColor: '#000',
   },
   image: {
     width: '100%',

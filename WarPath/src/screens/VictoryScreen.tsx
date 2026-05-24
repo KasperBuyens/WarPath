@@ -11,7 +11,8 @@ import Button from '../components/Button';
 import Divider from '../components/Divider';
 import Parchment from '../components/Parchment';
 import type { RootStackParamList } from '../navigation/RootNavigator';
-import { colors, spacing, typography } from '../theme';
+import { battleLayout } from '../styles/battleLayout';
+import { spacing } from '../theme';
 
 type VictoryNavProp = NativeStackNavigationProp<RootStackParamList, 'Victory'>;
 
@@ -42,19 +43,19 @@ export default function VictoryScreen() {
   const pulseScale = pulseAnim.interpolate({ inputRange: [0, 1], outputRange: [0.4, 1] });
 
   return (
-    <ImageBackground source={background} style={styles.background} resizeMode="cover">
-      <SafeAreaView style={styles.safeArea} edges={['left', 'right']}>
-        <View style={[styles.content, { paddingVertical: insets.top + spacing.md }]}>
+    <ImageBackground source={background} style={battleLayout.background} resizeMode="cover">
+      <SafeAreaView style={battleLayout.safeArea} edges={['left', 'right']}>
+        <View style={[battleLayout.content, { paddingVertical: insets.top + spacing.md }]}>
 
-          <View style={styles.imagePanel}>
-            <Image source={victoryImage} style={styles.victoryImage} resizeMode="contain" />
+          <View style={[battleLayout.imagePanel, styles.imagePanel]}>
+            <Image source={victoryImage} style={battleLayout.fullImage} resizeMode="contain" />
           </View>
 
           <ScrollView style={styles.infoPanel} showsVerticalScrollIndicator={false} bounces={false}>
-            <Parchment style={styles.parchmentWrap} contentStyle={styles.parchmentContent}>
-              <Text style={styles.title}>The War is Won!</Text>
-              <Text style={styles.lore}>
-                The war is won! The orcs have captured all leaders of the Human Lands.                
+            <Parchment style={battleLayout.parchmentWrap} contentStyle={battleLayout.parchmentContent}>
+              <Text style={battleLayout.title}>The War is Won!</Text>
+              <Text style={battleLayout.lore}>
+                The war is won! The orcs have captured all leaders of the Human Lands.
                 {'\n\n'}
                 Orc Warriors are marching through the villages near the capitol. They burn buildings and slaughter civilians, with no one to stop them.
                 {'\n\n'}
@@ -70,7 +71,7 @@ export default function VictoryScreen() {
               <Button
                 label="Return to Hub"
                 onPress={() => navigation.navigate('Hub')}
-                textStyle={styles.btnLabel}
+                textStyle={battleLayout.btnLabel}
               />
             </Parchment>
           </ScrollView>
@@ -89,47 +90,8 @@ export default function VictoryScreen() {
 }
 
 const styles = StyleSheet.create({
-  background: { flex: 1 },
-  safeArea: { flex: 1 },
-  content: {
-    flex: 1,
-    flexDirection: 'row',
-    paddingHorizontal: spacing.md,
-    gap: spacing.md,
-  },
-  imagePanel: {
-    width: '55%',
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  victoryImage: {
-    width: '100%',
-    height: '100%',
-  },
-  infoPanel: {
-    width: '45%',
-  },
-  parchmentWrap: {
-    width: '100%',
-  },
-  parchmentContent: {
-    paddingVertical: spacing.sm,
-    paddingHorizontal: spacing.md,
-    gap: spacing.xs,
-    alignItems: 'flex-start',
-  },
-  title: {
-    ...typography.body,
-    fontFamily: 'CaesarDressing',
-    color: colors.text,
-    width: '100%',
-  },
-  lore: {
-    ...typography.small,
-    color: colors.text,
-    lineHeight: 18,
-  },
-  btnLabel: { fontSize: 13, letterSpacing: 1 },
+  imagePanel: { width: '55%' },
+  infoPanel: { width: '45%' },
   victoryOverlay: {
     position: 'absolute',
     top: 0, left: 0, right: 0, bottom: 0,
