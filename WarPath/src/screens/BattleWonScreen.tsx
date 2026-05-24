@@ -13,6 +13,7 @@ import Divider from '../components/Divider';
 import Parchment from '../components/Parchment';
 import { useAuth } from '../contexts/AuthContext';
 import { BATTLES } from '../data/battles';
+import { getMeleeLossMultiplier, getRangeLossMultiplier } from '../data/leaders';
 import { db } from '../firebase';
 import type { RootStackParamList } from '../navigation/RootNavigator';
 import { colors, spacing, typography } from '../theme';
@@ -29,6 +30,7 @@ export default function BattleWonScreen() {
   const battle = BATTLES[params.locationId];
   const [losses, setLosses] = useState<{ melee: number; range: number } | null>(null);
   const goingToVictory = useRef(false);
+  const resultApplied = useRef(false);
 
   useFocusEffect(useCallback(() => {
     goingToVictory.current = false;
@@ -41,17 +43,21 @@ export default function BattleWonScreen() {
   }, []));
 
   useEffect(() => {
-    if (!user) return;
+    if (!user || resultApplied.current) return;
+    resultApplied.current = true;
+
     const ref = doc(db, 'users', user.uid, 'tribes', params.tribeId);
     const applyResult = async () => {
       const snap = await getDoc(ref);
       if (!snap.exists()) return;
       const data = snap.data();
-      const leaderId = data.leaderId as string | undefined;
-      const meleeMulti = leaderId === 'melee' ? 0.5 : leaderId === 'magic' ? 0.75 : 1;
-      const rangeMulti = leaderId === 'range' ? 0.5 : leaderId === 'magic' ? 0.75 : 1;
-      const meleeLoss = Math.round((Math.floor(Math.random() * (battle.meleeCost - 5 + 1)) + 5) * meleeMulti);
-      const rangeLoss = Math.round((Math.floor(Math.random() * (battle.rangeCost - 5 + 1)) + 5) * rangeMulti);
+      const leaderId = (data.leaderId as string | undefined) ?? '';
+      const meleeLoss = Math.round(
+        (Math.floor(Math.random() * (battle.meleeCost - 5 + 1)) + 5) * getMeleeLossMultiplier(leaderId)
+      );
+      const rangeLoss = Math.round(
+        (Math.floor(Math.random() * (battle.rangeCost - 5 + 1)) + 5) * getRangeLossMultiplier(leaderId)
+      );
       setLosses({ melee: meleeLoss, range: rangeLoss });
       await setDoc(ref, {
         [battle.wonField]: true,
@@ -60,7 +66,7 @@ export default function BattleWonScreen() {
       }, { merge: true });
     };
     applyResult();
-  }, [user, params.tribeId, battle.wonField]);
+  }, [user, params.tribeId, battle]);
 
   return (
     <ImageBackground source={background} style={styles.background} resizeMode="cover">
@@ -88,14 +94,14 @@ export default function BattleWonScreen() {
 
               {params.locationId === 'castle' ? (
                 <Button
-                  label="See the Victory!"
+                  label="Celebrate your Victory!"
                   onPress={() => { goingToVictory.current = true; navigation.navigate('Victory'); }}
                   textStyle={styles.btnLabel}
                 />
               ) : (
                 <Button
                   label="Return to Map"
-                  onPress={() => navigation.navigate('Map', { tribeId: params.tribeId })}
+                  onPress={() => navigation.navigate('WarTabs')}
                   textStyle={styles.btnLabel}
                 />
               )}

@@ -8,11 +8,9 @@ import HomeScreen from '../screens/HomeScreen';
 import HubScreen from '../screens/HubScreen';
 import LoadingScreen from '../screens/LoadingScreen';
 import LoginScreen from '../screens/LoginScreen';
-import MapScreen from '../screens/MapScreen';
 import RegisterScreen from '../screens/RegisterScreen';
-import TrainOrcsScreen from '../screens/TrainOrcsScreen';
-import TribeStatsScreen from '../screens/TribeStatsScreen';
 import VictoryScreen from '../screens/VictoryScreen';
+import WarTabNavigator from './WarTabNavigator';
 
 export type RootStackParamList = {
   Loading: undefined;
@@ -22,9 +20,7 @@ export type RootStackParamList = {
   About: undefined;
   Hub: undefined;
   CreateTribe: undefined;
-  Map: { tribeId: string };
-  TribeStats: { tribeId: string };
-  TrainOrcs: { tribeId: string };
+  WarTabs: undefined;
   Battle: { tribeId: string; locationId: string };
   BattleWon: { tribeId: string; locationId: string };
   Victory: undefined;
@@ -49,9 +45,7 @@ export default function RootNavigator() {
       />
       <Stack.Screen name="Hub" component={HubScreen} />
       <Stack.Screen name="CreateTribe" component={CreateTribeScreen} />
-      <Stack.Screen name="Map" component={MapScreen} />
-      <Stack.Screen name="TribeStats" component={TribeStatsScreen} />
-      <Stack.Screen name="TrainOrcs" component={TrainOrcsScreen} />
+      <Stack.Screen name="WarTabs" component={WarTabNavigator} />
       <Stack.Screen name="Battle" component={BattleScreen} />
       <Stack.Screen name="BattleWon" component={BattleWonScreen} />
       <Stack.Screen name="Victory" component={VictoryScreen} />

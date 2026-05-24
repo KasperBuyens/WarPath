@@ -13,6 +13,7 @@ import Divider from '../components/Divider';
 import Parchment from '../components/Parchment';
 import { useAuth } from '../contexts/AuthContext';
 import { BATTLES } from '../data/battles';
+import { getMeleeMultiplier, getRangeMultiplier } from '../data/leaders';
 import { db } from '../firebase';
 import type { RootStackParamList } from '../navigation/RootNavigator';
 import { colors, spacing, typography } from '../theme';
@@ -54,8 +55,8 @@ export default function BattleScreen() {
     });
   }, [user, params.tribeId]);
 
-  const meleeMulti = tribe?.leaderId === 'melee' ? 2 : tribe?.leaderId === 'magic' ? 1.5 : 1;
-  const rangeMulti = tribe?.leaderId === 'range' ? 2 : tribe?.leaderId === 'magic' ? 1.5 : 1;
+  const meleeMulti = tribe ? getMeleeMultiplier(tribe.leaderId) : 1;
+  const rangeMulti = tribe ? getRangeMultiplier(tribe.leaderId) : 1;
 
   const hasEnoughTroops =
     tribe !== null &&

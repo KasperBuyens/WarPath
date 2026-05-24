@@ -1,11 +1,12 @@
 import { FontAwesome5 } from '@expo/vector-icons';
 import { useNavigation } from '@react-navigation/native';
+import type { BottomTabBarProps } from '@react-navigation/bottom-tabs';
 import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { Image, Pressable, StyleSheet, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import type { RootStackParamList } from '../navigation/RootNavigator';
-import { colors } from '../theme';
+import { BAR_HEIGHT, CLAW_OVERHANG, colors } from '../theme';
 
 import anvilLogo from '../../assets/Images/AnvilLogo.png';
 import toothSmall from '../../assets/Images/ToothSmall.png';
@@ -13,20 +14,18 @@ import toothSmall from '../../assets/Images/ToothSmall.png';
 type NavProp = NativeStackNavigationProp<RootStackParamList>;
 
 type Props = {
-  tribeId: string;
-  active: 'map' | 'train';
+  tabProps: BottomTabBarProps;
 };
 
-const BAR_HEIGHT = 60;
-const CLAW_OVERHANG = 70;
-
-export default function BottomNav({ tribeId, active }: Props) {
+export default function BottomNav({ tabProps }: Props) {
   const navigation = useNavigation<NavProp>();
   const insets = useSafeAreaInsets();
 
+  const activeTab = tabProps.state.routes[tabProps.state.index].name;
+
   return (
-    <View style={styles.wrapper}>
-      <View style={styles.container}>
+    <View style={styles.wrapper} pointerEvents="box-none">
+      <View style={styles.container} pointerEvents="box-none">
         <View style={styles.bar}>
           <View style={styles.toothColLeft} pointerEvents="none">
             <Image source={toothSmall} style={styles.tooth} resizeMode="contain" />
@@ -38,13 +37,19 @@ export default function BottomNav({ tribeId, active }: Props) {
             </View>
           </Pressable>
 
-          <Pressable style={[styles.btnItem, active === 'map' && styles.activeBtn]} onPress={() => navigation.navigate('Map', { tribeId })}>
+          <Pressable
+            style={[styles.btnItem, activeTab === 'MapTab' && styles.activeBtn]}
+            onPress={() => tabProps.navigation.navigate('MapTab')}
+          >
             <View style={styles.iconWrap}>
               <FontAwesome5 name="map-marked-alt" size={30} color={colors.textLight} />
             </View>
           </Pressable>
 
-          <Pressable style={[styles.btnItem, active === 'train' && styles.activeBtn]} onPress={() => navigation.navigate('TrainOrcs', { tribeId })}>
+          <Pressable
+            style={[styles.btnItem, activeTab === 'TrainTab' && styles.activeBtn]}
+            onPress={() => tabProps.navigation.navigate('TrainTab')}
+          >
             <View style={styles.iconWrap}>
               <Image source={anvilLogo} style={styles.navIcon} resizeMode="contain" />
             </View>
@@ -56,13 +61,19 @@ export default function BottomNav({ tribeId, active }: Props) {
         </View>
       </View>
 
-      <View style={{ height: insets.bottom, backgroundColor: colors.statusBar }} />
+      <View style={styles.bottomStrip} />
     </View>
   );
 }
 
 const styles = StyleSheet.create({
-  wrapper: {},
+  wrapper: {
+    position: 'absolute',
+    bottom: 0,
+    left: 0,
+    right: 0,
+    backgroundColor: 'transparent',
+  },
   container: {
     width: '100%',
     height: BAR_HEIGHT + CLAW_OVERHANG,
@@ -113,5 +124,9 @@ const styles = StyleSheet.create({
     width: 30,
     height: 30,
     tintColor: colors.textLight,
+  },
+  bottomStrip: {
+    height: 12,
+    backgroundColor: colors.statusBar,
   },
 });

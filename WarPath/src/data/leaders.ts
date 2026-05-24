@@ -37,3 +37,27 @@ export const LEADERS: Leader[] = [
 export const LEADER_BY_ID: Record<string, Leader> = Object.fromEntries(
   LEADERS.map((l) => [l.id, l])
 );
+
+export function getMeleeMultiplier(leaderId: string): number {
+  if (leaderId === 'melee') return 2;
+  if (leaderId === 'magic') return 1.5;
+  return 1;
+}
+
+export function getRangeMultiplier(leaderId: string): number {
+  if (leaderId === 'range') return 2;
+  if (leaderId === 'magic') return 1.5;
+  return 1;
+}
+
+export function getMeleeLossMultiplier(leaderId: string): number {
+  if (leaderId === 'melee') return 0.5;
+  if (leaderId === 'magic') return 0.75;
+  return 1;
+}
+
+export function getRangeLossMultiplier(leaderId: string): number {
+  if (leaderId === 'range') return 0.5;
+  if (leaderId === 'magic') return 0.75;
+  return 1;
+}

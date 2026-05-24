@@ -7,6 +7,8 @@ import {
   type ViewStyle,
 } from 'react-native';
 
+import { colors } from '../theme';
+
 type OOCProps = {
   children: React.ReactNode;
   style?: StyleProp<ViewStyle>;
@@ -23,14 +25,14 @@ export default function OOC({ children, style, textStyle }: OOCProps) {
 
 const styles = StyleSheet.create({
   container: {
-    backgroundColor: 'rgba(60, 60, 60, 0.35)',
+    backgroundColor: colors.oocBackground,
     borderRadius: 4,
     paddingVertical: 10,
     paddingHorizontal: 14,
     marginVertical: 8,
   },
   text: {
-    color: '#1a1a1a',
+    color: colors.oocText,
     fontSize: 17,
     lineHeight: 25,
     fontStyle: 'italic',

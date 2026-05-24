@@ -3,8 +3,9 @@ import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { signOut } from 'firebase/auth';
 import { collection, deleteDoc, doc, onSnapshot } from 'firebase/firestore';
 import { useEffect, useRef, useState } from 'react';
-import { ActivityIndicator, Animated, Pressable, StyleSheet, Text, View, useWindowDimensions } from 'react-native';
+import { ActivityIndicator, Animated, StyleSheet, Text, View, useWindowDimensions } from 'react-native';
 
+import ActionButton from '../components/ActionButton';
 import Button from '../components/Button';
 import ConfirmModal from '../components/ConfirmModal';
 import Divider from '../components/Divider';
@@ -15,16 +16,17 @@ import { useAuth } from '../contexts/AuthContext';
 import { auth, db } from '../firebase';
 import type { RootStackParamList } from '../navigation/RootNavigator';
 import { useSlideSwipe } from '../hooks/useSlideSwipe';
-import { colors, parchmentWidth, spacing, darkTextShadow } from '../theme';
+import { useAppDispatch } from '../store';
+import { setActiveTribe } from '../store/tribeSlice';
+import { colors, darkTextShadow, parchmentWidth, spacing } from '../theme';
 import type { Tribe } from '../types';
 
 type HubNavProp = NativeStackNavigationProp<RootStackParamList, 'Hub'>;
 
-const LIFT = 5;
-
 export default function HubScreen() {
   const navigation = useNavigation<HubNavProp>();
   const { user } = useAuth();
+  const dispatch = useAppDispatch();
   const [tribes, setTribes] = useState<Tribe[]>([]);
   const [loading, setLoading] = useState(true);
   const [index, setIndex] = useState(0);
@@ -57,6 +59,11 @@ export default function HubScreen() {
   async function handleDelete(tribeId: string) {
     if (!user) return;
     await deleteDoc(doc(db, 'users', user.uid, 'tribes', tribeId));
+  }
+
+  function handleGoToWar(tribeId: string) {
+    dispatch(setActiveTribe(tribeId));
+    navigation.navigate('WarTabs');
   }
 
   if (loading) {
@@ -108,19 +115,21 @@ export default function HubScreen() {
               </Animated.View>
             </View>
 
-            {index < tribes.length && <View style={styles.actions}>
-              <ActionButton onPress={() => navigation.navigate('CreateTribe')} style={styles.sideButton}>
-                <Text style={styles.actionIcon}>＋</Text>
-              </ActionButton>
-              <Button
-                label="To War"
-                onPress={() => navigation.navigate('Map', { tribeId: tribe.id })}
-                style={styles.warButton}
-              />
-              <ActionButton onPress={() => setShowConfirm(true)} style={styles.sideButton}>
-                <Text style={styles.actionIcon}>🗑</Text>
-              </ActionButton>
-            </View>}
+            {index < tribes.length && (
+              <View style={styles.actions}>
+                <ActionButton onPress={() => navigation.navigate('CreateTribe')} style={styles.sideButton}>
+                  <Text style={styles.actionIcon}>＋</Text>
+                </ActionButton>
+                <Button
+                  label="To War"
+                  onPress={() => handleGoToWar(tribe.id)}
+                  style={styles.warButton}
+                />
+                <ActionButton onPress={() => setShowConfirm(true)} style={styles.sideButton}>
+                  <Text style={styles.actionIcon}>🗑</Text>
+                </ActionButton>
+              </View>
+            )}
 
             <ConfirmModal
               visible={showConfirm}
@@ -134,49 +143,6 @@ export default function HubScreen() {
     </ScreenLayout>
   );
 }
-
-function ActionButton({
-  onPress,
-  style,
-  children,
-}: {
-  onPress: () => void;
-  style?: object;
-  children: React.ReactNode;
-}) {
-  return (
-    <View style={[btnStyles.wrapper, style]}>
-      <View style={btnStyles.base} />
-      <Pressable
-        onPress={onPress}
-        style={({ pressed }) => [btnStyles.btn, pressed && btnStyles.pressed]}
-      >
-        {children}
-      </Pressable>
-    </View>
-  );
-}
-
-const btnStyles = StyleSheet.create({
-  wrapper: { position: 'relative' },
-  base: {
-    position: 'absolute',
-    top: LIFT, left: 0, right: 0, bottom: 0,
-    backgroundColor: colors.primaryDark,
-    borderRadius: 6,
-  },
-  btn: {
-    backgroundColor: colors.primary,
-    borderWidth: 3,
-    borderColor: colors.primaryDark,
-    borderRadius: 6,
-    alignItems: 'center',
-    justifyContent: 'center',
-    paddingVertical: 12,
-    marginBottom: LIFT,
-  },
-  pressed: { transform: [{ translateY: LIFT }], marginBottom: 0 },
-});
 
 const styles = StyleSheet.create({
   center: {
@@ -195,7 +161,7 @@ const styles = StyleSheet.create({
   content: {
     width: '100%',
     alignItems: 'center',
-    gap: 0,
+    gap: spacing.sm,
   },
   cardViewport: {
     alignSelf: 'stretch',
@@ -220,7 +186,6 @@ const styles = StyleSheet.create({
     fontSize: 22,
     color: colors.textLight,
   },
-
   swipeHint: {
     ...darkTextShadow,
     color: colors.textLight,

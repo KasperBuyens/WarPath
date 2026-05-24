@@ -1,5 +1,4 @@
-import { useFocusEffect, useRoute } from '@react-navigation/native';
-import type { RouteProp } from '@react-navigation/native';
+import { useFocusEffect } from '@react-navigation/native';
 import { doc, increment, onSnapshot, setDoc } from 'firebase/firestore';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import {
@@ -12,9 +11,8 @@ import {
   useWindowDimensions,
   View,
 } from 'react-native';
-import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context';
+import { SafeAreaView } from 'react-native-safe-area-context';
 
-import BottomNav from '../components/BottomNav';
 import Button from '../components/Button';
 import Divider from '../components/Divider';
 import Header from '../components/Header';
@@ -22,28 +20,28 @@ import Parchment from '../components/Parchment';
 import { useSlideSwipe } from '../hooks/useSlideSwipe';
 import { useAuth } from '../contexts/AuthContext';
 import { db } from '../firebase';
-import type { RootStackParamList } from '../navigation/RootNavigator';
-import { colors, NAV_HEIGHT, spacing, typography } from '../theme';
+import { useAppDispatch, useAppSelector } from '../store';
+import { toggleCheatMode } from '../store/settingsSlice';
+import { BAR_HEIGHT, CLAW_OVERHANG, colors, HEADER_HEIGHT, spacing, typography } from '../theme';
 
 import anvilImage from '../../assets/Images/Anvil.png';
 import background from '../../assets/Images/StoneBackground.jpg';
 import targetImage from '../../assets/Images/Target.png';
 
-type TrainRouteProp = RouteProp<RootStackParamList, 'TrainOrcs'>;
-
 const TARGET_SIZE = 80;
 
 export default function TrainOrcsScreen() {
-  const { params } = useRoute<TrainRouteProp>();
   const { user } = useAuth();
   const { width: screenWidth } = useWindowDimensions();
-  const insets = useSafeAreaInsets();
+  const dispatch = useAppDispatch();
+
+  const tribeId = useAppSelector((s) => s.tribe.activeTribeId);
+  const cheatMode = useAppSelector((s) => s.settings.cheatMode);
 
   const [meleeCount, setMeleeCount] = useState(0);
   const [rangeCount, setRangeCount] = useState(0);
   const [sessionMelee, setSessionMelee] = useState(0);
   const [sessionArcher, setSessionArcher] = useState(0);
-  const [cheatMode, setCheatMode] = useState(false);
 
   const panelCountRef = useRef(2);
   const { slideAnim, panHandlers } = useSlideSwipe({ screenWidth, countRef: panelCountRef });
@@ -57,11 +55,12 @@ export default function TrainOrcsScreen() {
   const pendingArcher = useRef(0);
   const userRef = useRef(user);
   userRef.current = user;
-  const tribeIdRef = useRef(params.tribeId);
+  const tribeIdRef = useRef(tribeId);
+  tribeIdRef.current = tribeId;
 
   useEffect(() => {
-    if (!user) return;
-    const ref = doc(db, 'users', user.uid, 'tribes', params.tribeId);
+    if (!user || !tribeId) return;
+    const ref = doc(db, 'users', user.uid, 'tribes', tribeId);
     return onSnapshot(ref, (snap) => {
       if (snap.exists()) {
         const data = snap.data();
@@ -69,23 +68,23 @@ export default function TrainOrcsScreen() {
         setRangeCount(data.rangeCount ?? 0);
       }
     });
-  }, [user, params.tribeId]);
+  }, [user, tribeId]);
 
-  // Flush to Firestore when leaving the screen, reset session so counts
-  // don't double when returning (DB value already includes flushed taps)
+  // Flush pending taps to Firestore when leaving screen, reset session counts
   useFocusEffect(
     useCallback(() => {
       return () => {
         const currentUser = userRef.current;
-        if (!currentUser) return;
+        const currentTribeId = tribeIdRef.current;
+        if (!currentUser || !currentTribeId) return;
         const melee = pendingMelee.current;
         const archer = pendingArcher.current;
         if (melee === 0 && archer === 0) return;
-        const ref = doc(db, 'users', currentUser.uid, 'tribes', tribeIdRef.current);
+        const ref = doc(db, 'users', currentUser.uid, 'tribes', currentTribeId);
         const update: Record<string, unknown> = {};
         if (melee > 0) update.meleeCount = increment(melee);
         if (archer > 0) update.rangeCount = increment(archer);
-        setDoc(ref, update, { merge: true });
+        setDoc(ref, update, { merge: true }).catch(() => {});
         pendingMelee.current = 0;
         pendingArcher.current = 0;
         setSessionMelee(0);
@@ -130,9 +129,9 @@ export default function TrainOrcsScreen() {
             ]}
           >
 
-            {/* ─── Panel 0 · Melee ─────────────────────────── */}
+            {/* Panel 0 · Melee */}
             <View
-              style={[styles.panel, { width: screenWidth, paddingTop: insets.top + 85, paddingBottom: insets.bottom + NAV_HEIGHT + spacing.md }]}
+              style={[styles.panel, { width: screenWidth }]}
             >
               <Parchment style={styles.parchment} contentStyle={styles.parchmentContent}>
 
@@ -162,9 +161,9 @@ export default function TrainOrcsScreen() {
               </Parchment>
             </View>
 
-            {/* ─── Panel 1 · Ranged ────────────────────────── */}
+            {/* Panel 1 · Ranged */}
             <View
-              style={[styles.panel, { width: screenWidth, paddingTop: insets.top + 85, paddingBottom: insets.bottom + NAV_HEIGHT + spacing.md }]}
+              style={[styles.panel, { width: screenWidth }]}
             >
               <Parchment style={styles.parchment} contentStyle={styles.parchmentContent}>
                 <Text style={[styles.bodyText, { textAlign: 'center' }]}>
@@ -184,9 +183,7 @@ export default function TrainOrcsScreen() {
                     zoneHeight.current = e.nativeEvent.layout.height;
                   }}
                 >
-                  <Animated.View
-                    style={[styles.targetMover, targetPos.getLayout()]}
-                  >
+                  <Animated.View style={[styles.targetMover, targetPos.getLayout()]}>
                     <Pressable onPress={trainArcher}>
                       <Image source={targetImage} style={styles.targetImg} resizeMode="contain" />
                     </Pressable>
@@ -204,23 +201,19 @@ export default function TrainOrcsScreen() {
           </Animated.View>
         </View>
 
-        <View style={styles.footerOverlay}>
-          <BottomNav tribeId={params.tribeId} active="train" />
-        </View>
-
-        <View style={styles.headerOverlay} pointerEvents="none">
-          <Header title="TRAIN ORCS" />
-        </View>
-
-        <View style={[styles.cheatBtnOverlay, { bottom: insets.bottom + 60 }]}>
+        <View style={styles.cheatBtnOverlay} pointerEvents="box-none">
           <Button
             label={cheatMode ? 'Cheat x10: ON' : 'Cheat x10: OFF'}
-            onPress={() => setCheatMode((v) => !v)}
+            onPress={() => dispatch(toggleCheatMode())}
             style={styles.cheatBtn}
             textStyle={styles.cheatBtnLabel}
             compact
             noLift
           />
+        </View>
+
+        <View style={styles.headerOverlay} pointerEvents="none">
+          <Header title="TRAIN ORCS" />
         </View>
 
       </SafeAreaView>
@@ -233,15 +226,15 @@ const styles = StyleSheet.create({
   safe: { flex: 1 },
   viewport: { flex: 1, overflow: 'hidden' },
   slidingRow: { flex: 1, flexDirection: 'row' },
-  parchment: { width: '100%', marginTop: 40 },
+  parchment: { width: '100%', marginTop: 10 },
   parchmentContent: { paddingTop: 16, paddingBottom: 16, paddingHorizontal: spacing.xs, gap: 2 },
   panel: {
     flex: 1,
     paddingHorizontal: spacing.md,
     alignItems: 'center',
     gap: spacing.sm,
-    justifyContent: 'center',
-    paddingTop: 40,
+    justifyContent: 'flex-start',
+    paddingTop: HEADER_HEIGHT - 15,
   },
   anvilArea: {
     width: '100%',
@@ -275,8 +268,7 @@ const styles = StyleSheet.create({
     marginBottom: 12,
   },
   headerOverlay: { position: 'absolute', top: 0, left: 0, right: 0 },
-  footerOverlay: { position: 'absolute', bottom: 0, left: 0, right: 0 },
-  cheatBtnOverlay: { position: 'absolute', left: 0, right: 0, alignItems: 'center' },
+  cheatBtnOverlay: { position: 'absolute', bottom: BAR_HEIGHT + CLAW_OVERHANG / 4, left: 0, right: 0, alignItems: 'center' },
   cheatBtn: { width: '50%', opacity: 0.45 },
   cheatBtnLabel: { fontSize: 11, letterSpacing: 1 },
 });

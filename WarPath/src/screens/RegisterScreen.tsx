@@ -3,7 +3,7 @@ import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { createUserWithEmailAndPassword } from 'firebase/auth';
 import { doc, setDoc } from 'firebase/firestore';
 import { Formik } from 'formik';
-import { Alert, KeyboardAvoidingView, Platform, StyleSheet, Text, View } from 'react-native';
+import { Alert, KeyboardAvoidingView, Platform, Text, View } from 'react-native';
 import * as Yup from 'yup';
 
 import Button from '../components/Button';
@@ -12,7 +12,7 @@ import ParchmentInput from '../components/ParchmentInput';
 import ScreenLayout from '../components/ScreenLayout';
 import { auth, db } from '../firebase';
 import type { RootStackParamList } from '../navigation/RootNavigator';
-import { colors, parchmentWidth, spacing } from '../theme';
+import { authFormStyles as styles } from '../styles/authForm';
 import { usernameToEmail } from '../utils/auth';
 
 type RegisterNavProp = NativeStackNavigationProp<RootStackParamList, 'Register'>;
@@ -91,6 +91,12 @@ export default function RegisterScreen() {
                   onPress={() => handleSubmit()}
                   disabled={isSubmitting}
                 />
+                <Button
+                  label="Return"
+                  onPress={() => navigation.goBack()}
+                  compact
+                  style={styles.returnButton}
+                />
               </View>
             )}
           </Formik>
@@ -99,25 +105,3 @@ export default function RegisterScreen() {
     </ScreenLayout>
   );
 }
-
-const styles = StyleSheet.create({
-  body: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    paddingHorizontal: spacing.md,
-  },
-  parchment: {
-    width: parchmentWidth,
-    alignSelf: 'center',
-  },
-  fields: {
-    width: '100%',
-    gap: spacing.sm,
-  },
-  error: {
-    color: colors.error,
-    fontSize: 13,
-    marginTop: -6,
-  },
-});

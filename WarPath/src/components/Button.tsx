@@ -9,7 +9,7 @@ import {
   type ViewStyle,
 } from 'react-native';
 
-import { colors } from '../theme';
+import { BUTTON_LIFT, colors, darkTextShadow } from '../theme';
 
 type ButtonProps = {
   label: string;
@@ -20,8 +20,6 @@ type ButtonProps = {
   compact?: boolean;
   noLift?: boolean;
 };
-
-const LIFT = 6;
 
 export default function Button({
   label,
@@ -34,18 +32,26 @@ export default function Button({
 }: ButtonProps) {
   return (
     <View style={[styles.wrapper, disabled && styles.wrapperDisabled, style]}>
-      <View style={styles.base} />
       <Pressable
         onPress={onPress}
         disabled={disabled}
         style={({ pressed }) => [
-          styles.button,
-          compact && styles.buttonCompact,
-          pressed && !noLift && styles.pressed,
+          styles.pressableWrap,
           pressed && noLift && styles.pressedScale,
         ]}
       >
-        <Text style={[styles.label, compact && styles.labelCompact, textStyle]}>{label}</Text>
+        {({ pressed }) => (
+          <>
+            <View style={styles.base} />
+            <View style={[
+              styles.button,
+              compact && styles.buttonCompact,
+              pressed && !noLift && styles.pressed,
+            ]}>
+              <Text style={[styles.label, compact && styles.labelCompact, textStyle]}>{label}</Text>
+            </View>
+          </>
+        )}
       </Pressable>
     </View>
   );
@@ -59,9 +65,12 @@ const styles = StyleSheet.create({
   wrapperDisabled: {
     opacity: 0.5,
   },
+  pressableWrap: {
+    width: '100%',
+  },
   base: {
     position: 'absolute',
-    top: LIFT,
+    top: BUTTON_LIFT,
     left: 0,
     right: 0,
     bottom: 0,
@@ -77,14 +86,14 @@ const styles = StyleSheet.create({
     borderColor: colors.primaryDark,
     alignItems: 'center',
     justifyContent: 'center',
-    marginBottom: LIFT,
+    marginBottom: BUTTON_LIFT,
   },
   buttonCompact: {
     paddingVertical: 8,
     paddingHorizontal: 10,
   },
   pressed: {
-    transform: [{ translateY: LIFT }],
+    transform: [{ translateY: BUTTON_LIFT }],
     marginBottom: 0,
   },
   pressedScale: {
@@ -97,9 +106,7 @@ const styles = StyleSheet.create({
     letterSpacing: 3,
     textTransform: 'uppercase',
     textAlign: 'center',
-    textShadowColor: 'rgba(0, 0, 0, 0.6)',
-    textShadowOffset: { width: 2, height: 2 },
-    textShadowRadius: 3,
+    ...darkTextShadow,
   },
   labelCompact: {
     fontSize: 11,

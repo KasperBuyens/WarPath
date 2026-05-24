@@ -15,6 +15,9 @@ export default function TribeCard({
   horseWon,
   castleWon,
 }: Tribe) {
+  if (__DEV__ && !LEADER_BY_ID[leaderId]) {
+    console.warn(`TribeCard: unknown leaderId "${leaderId}", falling back to melee`);
+  }
   const leader = LEADER_BY_ID[leaderId] ?? LEADER_BY_ID.melee;
 
   return (
@@ -42,7 +45,7 @@ export default function TribeCard({
             <Text style={styles.conquestLabel}>Conquered</Text>
             <Text style={vikingWon ? styles.won : styles.lost}>Viking Fleet</Text>
             <Text style={horseWon ? styles.won : styles.lost}>Horse Baron</Text>
-            <Text style={castleWon ? styles.won : styles.lost}>King&apos;s Castle</Text>
+            <Text style={castleWon ? styles.won : styles.lost}>{"King's Castle"}</Text>
           </View>
         </View>
       </View>

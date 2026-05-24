@@ -23,7 +23,9 @@ export default function VictoryScreen() {
 
   useFocusEffect(useCallback(() => {
     ScreenOrientation.lockAsync(ScreenOrientation.OrientationLock.LANDSCAPE);
-    return () => { ScreenOrientation.lockAsync(ScreenOrientation.OrientationLock.PORTRAIT); };
+    return () => {
+      ScreenOrientation.lockAsync(ScreenOrientation.OrientationLock.PORTRAIT);
+    };
   }, []));
 
   useEffect(() => {
@@ -54,13 +56,13 @@ export default function VictoryScreen() {
               <Text style={styles.lore}>
                 The war is won! The orcs have captured all leaders of the Human Lands.                
                 {'\n\n'}
-                Orc Warrios are marching through the villages near the capitol. They burn buildings and slaughter civilions, with noone to stop them.
+                Orc Warriors are marching through the villages near the capitol. They burn buildings and slaughter civilians, with no one to stop them.
                 {'\n\n'}
                 The defeated kings and barons are brought to the town square and to be executed for all to see.
                 {'\n\n'}
                 Knelt down, their heads will be severed from their shoulders one by one, their blood staining the grass.
                 {'\n\n'}
-                As a learned schollar once proclaimed: The Age of Men is over. The Time of the Orc has come
+                As a learned scholar once proclaimed: The Age of Men is over. The Time of the Orc has come.
               </Text>
 
               <Divider />

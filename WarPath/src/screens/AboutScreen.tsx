@@ -40,7 +40,7 @@ export default function AboutScreen() {
             <Divider />
 
             <OOC>
-              &quot;Warpath&quot; is a school project for the subject &quot;Mobile&quot;.
+              {"\"Warpath\""} is a school project for the subject {"\"Mobile\""}.
             </OOC>
 
             <Text style={styles.parchmentText}>
@@ -53,7 +53,7 @@ export default function AboutScreen() {
               {'\n\n'}
               For each battle thou shalt need troops, train them by forging swords and readying thine archers.
               {'\n\n'}
-              Once thou hast defeated the Viking fleet, ambushed the Horse Baron, and sieged the King&apos;s Castle, thou mayest claim rule over the Human lands!
+              Once thou hast defeated the Viking fleet, ambushed the Horse Baron, and sieged the King{"'"}s Castle, thou mayest claim rule over the Human lands!
 
             </Text>
 
@@ -69,7 +69,7 @@ export default function AboutScreen() {
               {'\n\n'}
               It is a fan page, written by a fan of the company and product who has no affiliation to the company.
               {'\n\n'}
-              My website follows LEGO®&apos;s notices and policies concerning fair play and proper use of the
+              My website follows LEGO®{"'"}s notices and policies concerning fair play and proper use of the
               LEGO® trademark and brand, see{' '}
               <Text
                 style={styles.link}
@@ -114,7 +114,7 @@ const styles = StyleSheet.create({
     color: colors.primary,
     letterSpacing: 2,
     textAlign: 'center',
-    marginBottom: 8,
+    marginBottom: spacing.xs,
   },
   parchmentText: {
     ...typography.body,
@@ -128,7 +128,7 @@ const styles = StyleSheet.create({
     color: colors.primary,
     letterSpacing: 1,
     marginTop: 18,
-    marginBottom: 8,
+    marginBottom: spacing.xs,
   },
   allOther: {
     ...typography.caption,

@@ -1,7 +1,7 @@
 import { Image, StyleSheet, Text, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
-import { colors } from '../theme';
+import { BAR_HEIGHT, CLAW_OVERHANG, colors } from '../theme';
 
 import toothBig from '../../assets/Images/ToothBig.png';
 import toothSmall from '../../assets/Images/ToothSmall.png';
@@ -15,7 +15,6 @@ export default function Header({ title }: HeaderProps) {
 
   return (
     <View>
-      {/* Dark red fill behind the status bar (clock, wifi, battery) */}
       <View style={[styles.statusBarFill, { height: insets.top }]} />
 
       <View style={styles.container}>
@@ -40,9 +39,6 @@ export default function Header({ title }: HeaderProps) {
     </View>
   );
 }
-
-const BAR_HEIGHT = 60;
-const CLAW_OVERHANG = 70;
 
 const styles = StyleSheet.create({
   statusBarFill: {

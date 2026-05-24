@@ -3,11 +3,13 @@ import * as ScreenOrientation from 'expo-screen-orientation';
 import { useFonts } from 'expo-font';
 import { StatusBar } from 'expo-status-bar';
 import { useEffect } from 'react';
+import { Provider } from 'react-redux';
 
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 
 import { AuthProvider } from './src/contexts/AuthContext';
 import RootNavigator from './src/navigation/RootNavigator';
+import { store, loadPersistedState } from './src/store';
 
 export default function App() {
   const [fontsLoaded, fontError] = useFonts({
@@ -18,18 +20,21 @@ export default function App() {
 
   useEffect(() => {
     ScreenOrientation.lockAsync(ScreenOrientation.OrientationLock.PORTRAIT);
+    loadPersistedState();
   }, []);
 
   if (!fontsLoaded) return null;
 
   return (
-    <SafeAreaProvider>
-      <AuthProvider>
-        <NavigationContainer>
-          <RootNavigator />
-          <StatusBar style="light" backgroundColor="#5A0E12" />
-        </NavigationContainer>
-      </AuthProvider>
-    </SafeAreaProvider>
+    <Provider store={store}>
+      <SafeAreaProvider>
+        <AuthProvider>
+          <NavigationContainer>
+            <RootNavigator />
+            <StatusBar style="light" backgroundColor="#5A0E12" />
+          </NavigationContainer>
+        </AuthProvider>
+      </SafeAreaProvider>
+    </Provider>
   );
 }

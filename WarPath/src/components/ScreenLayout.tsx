@@ -1,4 +1,4 @@
-import { ImageBackground, StyleSheet, type ViewStyle } from 'react-native';
+import { ImageBackground, StyleSheet, type StyleProp, type ViewStyle } from 'react-native';
 import { SafeAreaView, type Edge } from 'react-native-safe-area-context';
 
 import Header from './Header';
@@ -9,7 +9,7 @@ type ScreenLayoutProps = {
   title: string;
   children: React.ReactNode;
   edges?: Edge[];
-  style?: ViewStyle;
+  style?: StyleProp<ViewStyle>;
 };
 
 export default function ScreenLayout({

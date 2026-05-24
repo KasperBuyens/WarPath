@@ -28,6 +28,7 @@ import { useAuth } from '../contexts/AuthContext';
 import { LEADERS } from '../data/leaders';
 import { db } from '../firebase';
 import type { RootStackParamList } from '../navigation/RootNavigator';
+import { authFormStyles } from '../styles/authForm';
 import { colors, HEADER_HEIGHT, parchmentWidth, spacing } from '../theme';
 
 import background from '../../assets/Images/StoneBackground.jpg';
@@ -110,7 +111,7 @@ export default function CreateTribeScreen() {
                       maxLength={25}
                     />
                     {touched.tribeName && errors.tribeName && (
-                      <Text style={styles.error}>{errors.tribeName}</Text>
+                      <Text style={authFormStyles.error}>{errors.tribeName}</Text>
                     )}
 
                     <Divider />
@@ -176,12 +177,6 @@ const styles = StyleSheet.create({
     gap: spacing.sm,
     alignItems: 'center',
   },
-  error: {
-    color: colors.error,
-    fontSize: 13,
-    alignSelf: 'flex-start',
-    marginTop: -6,
-  },
   chooseLabel: {
     fontSize: 16,
     fontWeight: '700',
@@ -207,7 +202,7 @@ const styles = StyleSheet.create({
     borderWidth: 3,
     borderColor: colors.secondaryDark,
     borderRadius: 4,
-    backgroundColor: '#C8C4BF',
+    backgroundColor: colors.imageBg,
   },
   leaderImage: {
     width: 180,

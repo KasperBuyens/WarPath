@@ -21,7 +21,7 @@ export default function ConfirmModal({ visible, tribeName, onConfirm, onCancel }
           <Divider />
           <Text style={styles.body}>
             Dost thou truly wish to disband{'\n'}
-            <Text style={styles.tribeName}>&quot;{tribeName}&quot;</Text>
+            <Text style={styles.tribeName}>{'"'}{tribeName}{'"'}</Text>
             {'\n'}Thy warriors shall fall in battle, their glory lost forever.
           </Text>
           <Divider />
