@@ -21,7 +21,7 @@ import type { Tribe } from '../types';
 type BattleNavProp = NativeStackNavigationProp<RootStackParamList, 'Battle'>;
 type BattleRouteProp = RouteProp<RootStackParamList, 'Battle'>;
 
-type TribeCounts = Pick<Tribe, 'meleeCount' | 'rangeCount'>;
+type TribeCounts = Pick<Tribe, 'meleeCount' | 'rangeCount' | 'leaderId'>;
 
 export default function BattleScreen() {
   const navigation = useNavigation<BattleNavProp>();
@@ -43,15 +43,18 @@ export default function BattleScreen() {
     return onSnapshot(ref, (snap) => {
       if (snap.exists()) {
         const data = snap.data();
-        setTribe({ meleeCount: data.meleeCount ?? 0, rangeCount: data.rangeCount ?? 0 });
+        setTribe({ meleeCount: data.meleeCount ?? 0, rangeCount: data.rangeCount ?? 0, leaderId: data.leaderId ?? '' });
       }
     });
   }, [user, params.tribeId]);
 
+  const meleeMulti = tribe?.leaderId === 'melee' ? 2 : tribe?.leaderId === 'magic' ? 1.5 : 1;
+  const rangeMulti = tribe?.leaderId === 'range' ? 2 : tribe?.leaderId === 'magic' ? 1.5 : 1;
+
   const hasEnoughTroops =
     tribe !== null &&
-    tribe.meleeCount >= battle.meleeCost &&
-    tribe.rangeCount >= battle.rangeCost;
+    tribe.meleeCount * meleeMulti >= battle.meleeCost &&
+    tribe.rangeCount * rangeMulti >= battle.rangeCost;
 
   function handleAttack() {
     if (!hasEnoughTroops) {

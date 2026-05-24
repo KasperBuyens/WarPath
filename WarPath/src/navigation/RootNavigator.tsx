@@ -27,7 +27,7 @@ export type RootStackParamList = {
   TrainOrcs: { tribeId: string };
   Battle: { tribeId: string; locationId: string };
   BattleWon: { tribeId: string; locationId: string };
-  Victory: { tribeId: string };
+  Victory: undefined;
 };
 
 const Stack = createNativeStackNavigator<RootStackParamList>();

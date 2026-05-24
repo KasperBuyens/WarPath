@@ -41,8 +41,11 @@ export default function BattleWonScreen() {
       const snap = await getDoc(ref);
       if (!snap.exists()) return;
       const data = snap.data();
-      const meleeLoss = Math.floor(Math.random() * (battle.meleeCost - 5 + 1)) + 5;
-      const rangeLoss = Math.floor(Math.random() * (battle.rangeCost - 5 + 1)) + 5;
+      const leaderId = data.leaderId as string | undefined;
+      const meleeMulti = leaderId === 'melee' ? 0.5 : leaderId === 'magic' ? 0.75 : 1;
+      const rangeMulti = leaderId === 'range' ? 0.5 : leaderId === 'magic' ? 0.75 : 1;
+      const meleeLoss = Math.round((Math.floor(Math.random() * (battle.meleeCost - 5 + 1)) + 5) * meleeMulti);
+      const rangeLoss = Math.round((Math.floor(Math.random() * (battle.rangeCost - 5 + 1)) + 5) * rangeMulti);
       setLosses({ melee: meleeLoss, range: rangeLoss });
       await setDoc(ref, {
         [battle.wonField]: true,
@@ -77,11 +80,19 @@ export default function BattleWonScreen() {
 
               <Divider />
 
-              <Button
-                label="Return to Map"
-                onPress={() => navigation.navigate('Map', { tribeId: params.tribeId })}
-                textStyle={styles.btnLabel}
-              />
+              {params.locationId === 'castle' ? (
+                <Button
+                  label="See the Victory!"
+                  onPress={() => navigation.navigate('Victory')}
+                  textStyle={styles.btnLabel}
+                />
+              ) : (
+                <Button
+                  label="Return to Map"
+                  onPress={() => navigation.navigate('Map', { tribeId: params.tribeId })}
+                  textStyle={styles.btnLabel}
+                />
+              )}
             </Parchment>
           </ScrollView>
 
